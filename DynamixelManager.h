@@ -9,6 +9,8 @@
 #include "DynamixelUtils.h"
 #include <string>
 
+// TODO : Rajouter les vraies fonctions de manager
+
 class DynamixelManager {
 
 public:

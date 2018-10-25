@@ -37,7 +37,7 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
         delete packet;
 
         Serial.println("Received: ");
-        for(int i = 0; response.length(); i++)
+        for(int i = 0; i < response.length(); i++)
         {
             Serial.print((int)response[i]);
             Serial.print(",");
