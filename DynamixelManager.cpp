@@ -26,7 +26,7 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
     if(packet->responseSize == 0 )
     {
         delete packet;
-        return nullptr;
+        return std::string();
     }
     else
     {
