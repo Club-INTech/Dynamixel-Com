@@ -20,7 +20,6 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
 
     char clearBuffer[packet->packetSize+1] = {0};
     serial->readBytes(clearBuffer,packet->packetSize);
-    delete[] clearBuffer;
 
 
     if(packet->responseSize == 0 )

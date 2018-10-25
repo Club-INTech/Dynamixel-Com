@@ -14,8 +14,8 @@ public:
 
     DynamixelPacket* makeWritePacket(DynamixelAccessData, unsigned char*) override;
     DynamixelPacket* makeReadPacket(DynamixelAccessData) override;
-    bool decapsulatePacket(std::string) override;
-    bool decapsulatePacket(std::string, float&) override;
+    bool decapsulatePacket(const std::string&) override;
+    bool decapsulatePacket(const std::string&, float&) override;
 };
 
 

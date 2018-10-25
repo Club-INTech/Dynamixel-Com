@@ -71,11 +71,11 @@ DynamixelPacket* XL430::makeReadPacket(DynamixelAccessData)
 
 }
 
-bool XL430::decapsulatePacket(std::string packet)
+bool XL430::decapsulatePacket(const std::string &packet)
 {
     unsigned short responseLength = 7 + packet[5] + (packet[6] << 8) - 2;
 
-    if(crc_compute((unsigned char*)packet.c_str(),responseLength) == (packet[responseLength]+packet[responseLength+1] << 8))
+    if(crc_compute((unsigned char*)packet.c_str(),responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
         if((unsigned int)packet[8] < 128 && (int)packet[7] == 0x55)
         {
@@ -85,8 +85,7 @@ bool XL430::decapsulatePacket(std::string packet)
     return(false);
 }
 
-bool XL430::decapsulatePacket(std::string packet, float &value) {
-    std::string tempPacket = packet;
+bool XL430::decapsulatePacket(const std::string& packet, float &value) {
     if(decapsulatePacket(packet))
     {
         int parameterLength = packet[5] + (packet[6] << 8) - 4;

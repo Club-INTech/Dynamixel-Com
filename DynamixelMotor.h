@@ -33,8 +33,8 @@ public:
 
     virtual DynamixelPacket* makeWritePacket(DynamixelAccessData, unsigned char*) = 0;
     virtual DynamixelPacket* makeReadPacket(DynamixelAccessData) = 0;
-    virtual bool decapsulatePacket(std::string) = 0;
-    virtual bool decapsulatePacket(std::string, float&) = 0;
+    virtual bool decapsulatePacket(const std::string&) = 0;
+    virtual bool decapsulatePacket(const std::string&, float&) = 0;
 
 protected:
 

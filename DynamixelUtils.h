@@ -103,8 +103,6 @@ constexpr unsigned short crc_table[256] = {
 constexpr unsigned char v1Header[2] = {0xFF,0xFF};
 constexpr unsigned char v2Header[4] = {0xFF,0xFF,0xFD,0x00};
 
-constexpr
-
 static unsigned char v1Checksum(unsigned char *packet_to_check, unsigned short packet_size)
 {
     int tempSum = 0;
