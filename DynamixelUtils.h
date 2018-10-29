@@ -32,14 +32,14 @@ struct DynamixelMotorData {
 
     uint8_t motorID;
 
-    const DynamixelAccessData id;
-    const DynamixelAccessData led;
-    const DynamixelAccessData torqueEnable;
-    const DynamixelAccessData currentTorque;
-    const DynamixelAccessData goalAngle;
-    const DynamixelAccessData currentAngle;
-    const DynamixelAccessData goalVelocity;
-    const DynamixelAccessData currentVelocity;
+    const DynamixelAccessData& id;
+    const DynamixelAccessData& led;
+    const DynamixelAccessData& torqueEnable;
+    const DynamixelAccessData& currentTorque;
+    const DynamixelAccessData& goalAngle;
+    const DynamixelAccessData& currentAngle;
+    const DynamixelAccessData& goalVelocity;
+    const DynamixelAccessData& currentVelocity;
 
     const float valueToTorque;
     const float valueToAngle;
