@@ -18,7 +18,7 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
 //    }
     serial->write(packet->packetData,packet->packetSize);
 
-    char clearBuffer[packet->packetSize+1] = {0};
+    char clearBuffer[30] = {0};
     serial->readBytes(clearBuffer,packet->packetSize);
 
 
@@ -37,7 +37,7 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
         delete packet;
 
         Serial.println("Received: ");
-        for(int i = 0; i < response.length(); i++)
+        for(unsigned int i = 0; i < response.length(); i++)
         {
             Serial.print((int)response[i]);
             Serial.print(",");

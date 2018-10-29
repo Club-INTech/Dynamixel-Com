@@ -5,11 +5,9 @@
 #include "XL430.h"
 
 XL430::XL430(uint8_t id, const DynamixelManager& dynamixelManager) : DynamixelMotor(id,
-                                          DynamixelMotorData(id,DynamixelAccessData(0x07,0x00,1),
-                                          DynamixelAccessData(0x41,0x00,1), DynamixelAccessData(0x40,0x00,1),
-                                          DynamixelAccessData(0x7e,0x00,2), DynamixelAccessData(0x74,0x00,4),
-                                          DynamixelAccessData(0x84,0x00,4), DynamixelAccessData(0x68,0x00,4),
-                                          DynamixelAccessData(0x80,0x00,4), 0.0015, 0.088,0.229), dynamixelManager)
+                                          DynamixelMotorData(id,xl430ID,xl430LED,xl430TorqueEnable,xl430CurrentTorque,
+                                          xl430GoalAngle, xl430CurrentAngle,xl430GoalVelocity,xl430CurrentVelocity,
+                                          0.0015, 0.088,0.229), dynamixelManager)
 {
 
 }

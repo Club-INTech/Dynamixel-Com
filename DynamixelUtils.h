@@ -5,8 +5,10 @@
 #ifndef DYNAMIXEL_UTILS_H
 #define DYNAMIXEL_UTILS_H
 
+#include "Arduino.h"
+
 struct DynamixelAccessData {
-    DynamixelAccessData(uint8_t addressLSB, uint8_t addressMSB, uint8_t size) : address{addressLSB,addressMSB}, length(size)
+    DynamixelAccessData(const uint8_t addressLSB,const uint8_t addressMSB,const uint8_t size) : address{addressLSB,addressMSB}, length(size)
     {}
 
     const uint8_t address[2];
@@ -15,13 +17,13 @@ struct DynamixelAccessData {
 
 struct DynamixelMotorData {
 
-    DynamixelMotorData(uint8_t newID,DynamixelAccessData idAccess,DynamixelAccessData ledAccess,
-                       DynamixelAccessData torqueEnAccess, DynamixelAccessData currentTorqueEn,
-                       DynamixelAccessData goalAngleAccess,DynamixelAccessData currentAngleAccess,
-                       DynamixelAccessData goalVelocityAccess,DynamixelAccessData currentVelocityAccess,
+    DynamixelMotorData(uint8_t newID,const DynamixelAccessData& idAccess,const DynamixelAccessData& ledAccess,
+                       const DynamixelAccessData& torqueEnAccess, const DynamixelAccessData& currentTorqueAccess,
+                       const DynamixelAccessData& goalAngleAccess,const DynamixelAccessData& currentAngleAccess,
+                       const DynamixelAccessData& goalVelocityAccess,const DynamixelAccessData& currentVelocityAccess,
                        float torqueConvertFactor,float angleConvertFactor,float velocityConvertFactor)
                         : motorID(newID), id(idAccess), led(ledAccess),
-                          torqueEnable(torqueEnAccess), currentTorque(currentTorqueEn),
+                          torqueEnable(torqueEnAccess), currentTorque(currentTorqueAccess),
                           goalAngle(goalAngleAccess), currentAngle(currentAngleAccess),
                           goalVelocity(goalVelocityAccess), currentVelocity(currentVelocityAccess),
                           valueToTorque(torqueConvertFactor), valueToAngle(angleConvertFactor),
@@ -121,7 +123,7 @@ static unsigned short crc_compute(unsigned char *packet_to_check, unsigned short
 
     for(j = 0; j < packet_size; j++)
     {
-        i = ((unsigned short)(crc_accum >> 8) ^ packet_to_check[j]) & 0xFF;
+        i = ((crc_accum >> 8) ^ packet_to_check[j]) & 0xFF;
         crc_accum = (crc_accum << 8) ^ crc_table[i];
     }
 
