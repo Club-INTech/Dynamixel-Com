@@ -4,17 +4,26 @@
 
 #include "XL430.h"
 
-XL430::XL430(uint8_t id, const DynamixelManager& dynamixelManager) : DynamixelMotor(id,
-                                          DynamixelMotorData(id,xl430ID,xl430LED,xl430TorqueEnable,xl430CurrentTorque,
-                                          xl430GoalAngle, xl430CurrentAngle,xl430GoalVelocity,xl430CurrentVelocity,
-                                          0.0015, 0.088,0.229), dynamixelManager)
+const DynamixelAccessData& XL430::xl430ID = DynamixelAccessData(0x07,0x00,1);
+const DynamixelAccessData& XL430::xl430LED = DynamixelAccessData(0x41,0x00,1);
+const DynamixelAccessData& XL430::xl430TorqueEnable = DynamixelAccessData(0x40,0x00,1);
+const DynamixelAccessData& XL430::xl430CurrentTorque = DynamixelAccessData(0x7e,0x00,2);
+const DynamixelAccessData& XL430::xl430GoalAngle = DynamixelAccessData(0x74,0x00,4);
+const DynamixelAccessData& XL430::xl430CurrentAngle = DynamixelAccessData(0x84,0x00,4);
+const DynamixelAccessData& XL430::xl430GoalVelocity = DynamixelAccessData(0x68,0x00,4);
+const DynamixelAccessData& XL430::xl430CurrentVelocity = DynamixelAccessData(0x80,0x00,4);
+
+XL430::XL430(uint8_t id, const DynamixelManager& dynamixelManager) : DynamixelMotor(id, DynamixelMotorData(id, xl430ID,
+                                          xl430LED,xl430TorqueEnable,xl430CurrentTorque, xl430GoalAngle, xl430CurrentAngle,
+                                          xl430GoalVelocity,xl430CurrentVelocity, torqueConversionFactor,
+                                          angleConversionFactor,velocityConversionFactor), dynamixelManager)
 {
 
 }
 
 DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned char * parameters)
 {
-    uint8_t packetSize = 4+1+2+1+2+accessData.length+2;
+    uint8_t packetSize = dynamixelV2::minPacketLenght+accessData.length;
     unsigned char* packet = new unsigned char[packetSize];
 
     int position = 0;
@@ -27,12 +36,12 @@ DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned
     packet[position] = motorData.motorID;
     motorData.motorID = motorID;
     position ++;
-    int instructionsLength = 1+2+accessData.length+2;
+    int instructionsLength = dynamixelV2::minInstructionLength+accessData.length;
     packet[position] = instructionsLength & 0xFF;
     position++;
     packet[position] = (instructionsLength >> 8) & 0xFF;
     position++;
-    packet[position] = 0x03;
+    packet[position] = dynamixelV2::writeInstruction;
     position++;
     packet[position] = accessData.address[0];
     position++;
@@ -71,11 +80,11 @@ DynamixelPacket* XL430::makeReadPacket(DynamixelAccessData)
 
 bool XL430::decapsulatePacket(const std::string &packet)
 {
-    unsigned short responseLength = 7 + packet[5] + (packet[6] << 8) - 2;
+    unsigned short responseLength = dynamixelV2::minResponseLength + packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8);
 
     if(crc_compute((unsigned char*)packet.c_str(),responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
-        if((unsigned int)packet[8] < 128 && (int)packet[7] == 0x55)
+        if(!((unsigned int)packet[8] & dynamixelV2::alertByte) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
         {
             return(true);
         }
@@ -83,14 +92,15 @@ bool XL430::decapsulatePacket(const std::string &packet)
     return(false);
 }
 
-bool XL430::decapsulatePacket(const std::string& packet, float &value) {
+bool XL430::decapsulatePacket(const std::string& packet, float &value)
+{
     if(decapsulatePacket(packet))
     {
-        int parameterLength = packet[5] + (packet[6] << 8) - 4;
+        int parameterLength = packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8) - 4;
 
         for(int i = 0; i<parameterLength; i++)
         {
-            value += (int)(packet[9+i] << 8*i);
+            value += (int)(packet[dynamixelV2::responseParameterStart+i] << 8*i);
         }
 
         return(true);

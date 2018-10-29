@@ -7,6 +7,22 @@
 
 #include "Arduino.h"
 
+enum dynamixelV2{
+    minPacketLenght = 12,
+    minInstructionLength = 5,
+    minResponseLength = 5,
+    writeInstruction = 0x03,
+    readInstruction,
+    statusInstruction = 0x55,
+    alertByte = 128,
+    lengthLSBPos = 5,
+    lengthMSBPos = 6,
+    instructionPos = 7,
+    responseParameterStart = 8
+};
+
+
+
 struct DynamixelAccessData {
     DynamixelAccessData(const uint8_t addressLSB,const uint8_t addressMSB,const uint8_t size) : address{addressLSB,addressMSB}, length(size)
     {}
@@ -21,7 +37,7 @@ struct DynamixelMotorData {
                        const DynamixelAccessData& torqueEnAccess, const DynamixelAccessData& currentTorqueAccess,
                        const DynamixelAccessData& goalAngleAccess,const DynamixelAccessData& currentAngleAccess,
                        const DynamixelAccessData& goalVelocityAccess,const DynamixelAccessData& currentVelocityAccess,
-                       float torqueConvertFactor,float angleConvertFactor,float velocityConvertFactor)
+                       const float torqueConvertFactor,const float angleConvertFactor,const float velocityConvertFactor)
                         : motorID(newID), id(idAccess), led(ledAccess),
                           torqueEnable(torqueEnAccess), currentTorque(currentTorqueAccess),
                           goalAngle(goalAngleAccess), currentAngle(currentAngleAccess),

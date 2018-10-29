@@ -27,15 +27,11 @@ private:
     static const DynamixelAccessData& xl430CurrentAngle;
     static const DynamixelAccessData& xl430GoalVelocity;
     static const DynamixelAccessData& xl430CurrentVelocity;
+
+    static constexpr float torqueConversionFactor = 0.0015;
+    static constexpr float angleConversionFactor = 0.088;
+    static constexpr float velocityConversionFactor = 0.229;
 };
 
-const DynamixelAccessData& XL430::xl430ID = DynamixelAccessData(0x07,0x00,1);
-const DynamixelAccessData& XL430::xl430LED = DynamixelAccessData(0x41,0x00,1);
-const DynamixelAccessData& XL430::xl430TorqueEnable = DynamixelAccessData(0x40,0x00,1);
-const DynamixelAccessData& XL430::xl430CurrentTorque = DynamixelAccessData(0x7e,0x00,2);
-const DynamixelAccessData& XL430::xl430GoalAngle = DynamixelAccessData(0x74,0x00,4);
-const DynamixelAccessData& XL430::xl430CurrentAngle = DynamixelAccessData(0x84,0x00,4);
-const DynamixelAccessData& XL430::xl430GoalVelocity = DynamixelAccessData(0x68,0x00,4);
-const DynamixelAccessData& XL430::xl430CurrentVelocity = DynamixelAccessData(0x80,0x00,4);
 
 #endif //XL30_XL430_H
