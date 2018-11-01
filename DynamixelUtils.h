@@ -7,30 +7,71 @@
 
 #include "Arduino.h"
 
+/*
+ * Protocol utilities
+ */
+
+//!Dynamixel Potocol v2 magic values
+/*!
+ * The enum contains useful values of the Dynamixel communication protocol 2.0. For example:
+ * \li Minimum lengths of messages
+ * \li Instruction values
+ * \li Positions of useful data
+ */
 enum dynamixelV2{
-    minPacketLenght = 12,
-    minInstructionLength = 5,
-    minResponseLength = 5,
+    minPacketLenght = 12,       //!< With checksum
+    minInstructionLength = 5,   //!< Without checksum
+    minResponseLength = 5,      //!< Without checksum
     writeInstruction = 0x03,
     readInstruction,
     statusInstruction = 0x55,
-    alertByte = 128,
+    alertBit = 128,
     lengthLSBPos = 5,
     lengthMSBPos = 6,
     instructionPos = 7,
     responseParameterStart = 8
 };
 
+constexpr unsigned char v1Header[2] = {0xFF,0xFF};
+constexpr unsigned char v2Header[4] = {0xFF,0xFF,0xFD,0x00};
 
 
+
+/*
+ * Data structures definitions
+ */
+
+
+
+//! Contains address and length of data.
+/*!
+ * \li Address is two bytes long, represented in little endian.
+ * \li Length is the length in bytes of subsequent data
+ *
+ */
 struct DynamixelAccessData {
     DynamixelAccessData(const uint8_t addressLSB,const uint8_t addressMSB,const uint8_t size) : address{addressLSB,addressMSB}, length(size)
     {}
 
-    const uint8_t address[2];
-    const uint8_t length;
+    const uint8_t address[2];    //!< Two bytes, little endian memory address
+    const uint8_t length;        //!< Length of data to read/write
 };
 
+
+
+//! Contains necessary data for data access and conversion
+/*!
+ * <br>It is a protected member of DynamixelMotor thus it can be re-used in child classes,
+ * each child defining its own DynamixelAccessData and conversion factors.
+ * <br>DynamixelMotor does not define any default value.
+ * <br>The structure contains the following data:
+ * \li Angle and velocity readings and targets access
+ * \li Torque activation and reading access
+ * \li ID and LED access
+ * \li Angle, velocity and torque conversion factors
+ * \li Motor ID
+ *
+ */
 struct DynamixelMotorData {
 
     DynamixelMotorData(uint8_t newID,const DynamixelAccessData& idAccess,const DynamixelAccessData& ledAccess,
@@ -46,8 +87,14 @@ struct DynamixelMotorData {
                           valueToVelocity(velocityConvertFactor)
     {}
 
-    uint8_t motorID;
+    uint8_t motorID; //!< Only object-specific attribute, used for ID changes
 
+    /*!
+     * \name Common attributes
+     * Class-specific attributes : each kind of motor has its own. Ideally, every object of the same class should reference
+     * the same DynamixelAccessData objects to minimize memory impact.
+     */
+    //!@{
     const DynamixelAccessData& id;
     const DynamixelAccessData& led;
     const DynamixelAccessData& torqueEnable;
@@ -60,29 +107,44 @@ struct DynamixelMotorData {
     const float valueToTorque;
     const float valueToAngle;
     const float valueToVelocity;
+    //!@}
 };
 
+
+
+//!Abstraction struct allowing protocol-independent sending and receiving
+/*!
+ * The main goal of this struct is to allow the DynamixelManager to send and receive messages without any knowledge of
+ * the underlying protocols. Thus, we can use any motor with any protocol.
+ */
 struct DynamixelPacket {
-    DynamixelPacket(unsigned char* packet, uint8_t length) : packetData(packet), packetSize(length), responseSize(0)
+
+    //!Packet without expected response : status packets will be ignored.
+    DynamixelPacket(const unsigned char* packet, uint8_t length) : packet(packet), packetSize(length), responseSize(0)
     {}
-    DynamixelPacket(unsigned char* packet, uint8_t length, uint8_t responseLength) : packetData(packet), packetSize(length), responseSize(responseLength)
+    DynamixelPacket(const unsigned char* packet, uint8_t length, uint8_t responseLength) : packet(packet), packetSize(length), responseSize(responseLength)
     {}
     ~DynamixelPacket()
     {
-        delete[] packetData;
+        delete[] packet;
     }
 
-    const unsigned char* packetData;
-    const uint8_t packetSize;
-    const uint8_t responseSize;
+    const unsigned char* packet;
+    const uint8_t packetSize;           //!< Length of data to send through serial.
+    const uint8_t responseSize;         //!< Expected response size. If too big, serial will timeout.
 };
 
+
+
 /*
- * Checksums
+ * Error detection functions
  */
 
 
-// Used during the checksum computation
+/*!
+ * This table is used during the checksum calcultion of the Dynamixel communication protocol 2
+ * <br>See crc_compute(const unsigned char*, unsigned short) for details
+ */
 constexpr unsigned short crc_table[256] = {
         0x0000, 0x8005, 0x800F, 0x000A, 0x801B, 0x001E, 0x0014, 0x8011,
         0x8033, 0x0036, 0x003C, 0x8039, 0x0028, 0x802D, 0x8027, 0x0022,
@@ -118,10 +180,14 @@ constexpr unsigned short crc_table[256] = {
         0x8213, 0x0216, 0x021C, 0x8219, 0x0208, 0x820D, 0x8207, 0x0202
 };
 
-constexpr unsigned char v1Header[2] = {0xFF,0xFF};
-constexpr unsigned char v2Header[4] = {0xFF,0xFF,0xFD,0x00};
-
-static unsigned char v1Checksum(unsigned char *packet_to_check, unsigned short packet_size)
+//! Dynamixel Protocl v1 checksum
+/*!
+ * Classic ones complement of the packet sum.
+ * @param packet_to_check
+ * @param packet_size
+ * @return 1 byte checksum
+ */
+static unsigned char v1Checksum(const unsigned char *packet_to_check, unsigned short packet_size)
 {
     int tempSum = 0;
     for(int i=0;i<packet_size;i++)
@@ -132,7 +198,15 @@ static unsigned char v1Checksum(unsigned char *packet_to_check, unsigned short p
     return(~tempSum & 0xFF);
 }
 
-static unsigned short crc_compute(unsigned char *packet_to_check, unsigned short packet_size)
+//! Dynamixel Protocol v2 crc
+/*!
+ * Cyclic redundancy check from Dynamixel communication protocol 2. It is an error-detecting code.
+ * <br>See http://emanual.robotis.com/docs/en/dxl/crc/ for details.
+ * @param packet_to_check
+ * @param packet_size
+ * @return 2 Byte, little endian crc
+ */
+static unsigned short crc_compute(const unsigned char *packet_to_check, unsigned short packet_size)
 {
     unsigned short crc_accum = 0;
     unsigned short i, j;
@@ -146,4 +220,4 @@ static unsigned short crc_compute(unsigned char *packet_to_check, unsigned short
     return crc_accum;
 }
 
-#endif //XL30_DYNAMIXELUTILS_H
+#endif //DYNAMIXEL_UTILS_H

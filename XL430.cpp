@@ -4,6 +4,8 @@
 
 #include "XL430.h"
 
+// Definition of previously declared static members to prevent conflicts during linking
+
 const DynamixelAccessData& XL430::xl430ID = DynamixelAccessData(0x07,0x00,1);
 const DynamixelAccessData& XL430::xl430LED = DynamixelAccessData(0x41,0x00,1);
 const DynamixelAccessData& XL430::xl430TorqueEnable = DynamixelAccessData(0x40,0x00,1);
@@ -34,7 +36,7 @@ DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned
     }
 
     packet[position] = motorData.motorID;
-    motorData.motorID = motorID;
+    motorData.motorID = motorID;            // This allows to change motor ID and keep communicating
     position ++;
     int instructionsLength = dynamixelV2::minInstructionLength+accessData.length;
     packet[position] = instructionsLength & 0xFF;
@@ -54,21 +56,10 @@ DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned
         position++;
     }
 
-//    Serial.println(instructionsLength+5);
-
     unsigned short crc = crc_compute(packet,instructionsLength+5);
     packet[position] = crc & 0xFF;
     position++;
     packet[position] = (crc >> 8) & 0xFF;
-
-//    Serial.println(packetSize);
-//    Serial.println("Sent: ");
-//    for(int i = 0;i<packetSize;i++)
-//    {
-//        Serial.print(*(packet+i));
-//        Serial.print(",");
-//    }
-//    Serial.println("");
 
     return(new DynamixelPacket(packet,packetSize,11));
 }
@@ -82,15 +73,18 @@ bool XL430::decapsulatePacket(const std::string &packet)
 {
     unsigned short responseLength = dynamixelV2::minResponseLength + packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8);
 
+    // Checks CRC
     if(crc_compute((unsigned char*)packet.c_str(),responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
-        if(!((unsigned int)packet[8] & dynamixelV2::alertByte) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
+        // If valid, checks alert byte and instruction type
+        if(!((unsigned int)packet[8] & dynamixelV2::alertBit) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
         {
             return(true);
         }
     }
     return(false);
 }
+
 
 bool XL430::decapsulatePacket(const std::string& packet, float &value)
 {

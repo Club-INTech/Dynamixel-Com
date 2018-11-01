@@ -7,6 +7,11 @@
 
 #include "DynamixelMotor.h"
 
+
+//! XL430-specific class
+/*!
+ * \sa XL430 documentation : http://emanual.robotis.com/docs/en/dxl/x/xl430-w250/
+ */
 class XL430 : public DynamixelMotor
 {
 public:
@@ -17,6 +22,7 @@ public:
     bool decapsulatePacket(const std::string&) override;
     bool decapsulatePacket(const std::string&, float&) override;
 
+    //! The static members are used in order to minimize the memory usage of each individual object.
 private:
 
     static const DynamixelAccessData& xl430ID;
