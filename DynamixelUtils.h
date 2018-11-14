@@ -120,17 +120,17 @@ struct DynamixelMotorData {
 struct DynamixelPacket {
 
     //!Packet without expected response : status packets will be ignored.
-    DynamixelPacket(const unsigned char* packet, uint8_t length) : packet(packet), packetSize(length), responseSize(0)
+    DynamixelPacket(const unsigned char* packet, uint8_t length) : data(packet), dataSize(length), responseSize(0)
     {}
-    DynamixelPacket(const unsigned char* packet, uint8_t length, uint8_t responseLength) : packet(packet), packetSize(length), responseSize(responseLength)
+    DynamixelPacket(const unsigned char* packet, uint8_t length, uint8_t responseLength) : data(packet), dataSize(length), responseSize(responseLength)
     {}
     ~DynamixelPacket()
     {
-        delete[] packet;
+        delete[] data;
     }
 
-    const unsigned char* packet;
-    const uint8_t packetSize;           //!< Length of data to send through serial.
+    const unsigned char* data;
+    const uint8_t dataSize;           //!< Length of data to send through serial.
     const uint8_t responseSize;         //!< Expected response size. If too big, serial will timeout.
 };
 

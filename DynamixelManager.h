@@ -7,7 +7,6 @@
 
 #include "Arduino.h"
 #include "DynamixelUtils.h"
-#include <string>
 
 // TODO : Rajouter les vraies fonctions de manager
 
@@ -33,7 +32,7 @@ public:
      * @param packet
      * @return Response string, eventually empty.
      */
-    std::string sendPacket(DynamixelPacket *) const;
+    String sendPacket(DynamixelPacket *) const;
 
 private:
 

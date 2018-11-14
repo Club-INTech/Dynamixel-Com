@@ -10,7 +10,7 @@ DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial) : serial(dyn
     serial->begin(57600);
 }
 
-std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
+String DynamixelManager::sendPacket(DynamixelPacket *packet) const
 {
 
 #ifdef DYN_VERBOSE
@@ -22,24 +22,21 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
     Serial.println("");
 #endif
 
-    serial->write(packet->packet,packet->packetSize);       // Sends packet
+    serial->write(packet->data,packet->dataSize);       // Sends packet
 
-    char clearBuffer[30] = {0};
-    serial->readBytes(clearBuffer,packet->packetSize);      // Reads sent packet to clear serial
+    char* clearBuffer = new char[packet->dataSize];
+    serial->readBytes(clearBuffer,packet->dataSize);      // Reads sent packet to clear serial
 
 
     if(packet->responseSize == 0 )
     {
         delete packet;
-        return std::string();
+        return String();
     }
     else
     {
-        char* buffer = new char[packet->responseSize+1];
-        serial->readBytes(buffer,packet->responseSize+1);       // Reads return message and turns it into a std::string
-        std::string response (buffer,packet->responseSize+1);
+        String response = serial->readString(packet->responseSize);
 
-        delete[] buffer;
         delete packet;
 
 #ifdef DYN_VERBOSE

@@ -40,21 +40,21 @@ bool DynamixelMotor::changeID(uint8_t id)
 {
     unsigned char parameter[1] = {id};
     motorID = id;
-    std::string returnPacket = manager.sendPacket(makeWritePacket(motorData.id, parameter));
+    String returnPacket = manager.sendPacket(makeWritePacket(motorData.id, parameter));
     return(decapsulatePacket(returnPacket));
 }
 
 bool DynamixelMotor::changeLED(bool state)
 {
     unsigned char parameter[1] = {state};
-    std::string returnPacket = manager.sendPacket(makeWritePacket(motorData.led,parameter));
+    String returnPacket = manager.sendPacket(makeWritePacket(motorData.led,parameter));
     return(decapsulatePacket(returnPacket));
 }
 
 bool DynamixelMotor::toggleTorque(bool state)
 {
     unsigned char parameter[1] = {state};
-    std::string returnPacket = manager.sendPacket(makeWritePacket(motorData.torqueEnable,parameter));
+    String returnPacket = manager.sendPacket(makeWritePacket(motorData.torqueEnable,parameter));
     return(decapsulatePacket(returnPacket));
 }
 
@@ -69,13 +69,13 @@ bool DynamixelMotor::setGoalAngle(float targetAngleDegree)
         targetAngleValue = targetAngleValue >> 8;
     }
 
-    std::string returnPacket = manager.sendPacket(makeWritePacket(motorData.goalAngle,parameter));
+    String returnPacket = manager.sendPacket(makeWritePacket(motorData.goalAngle,parameter));
     return(decapsulatePacket(returnPacket));
 }
 
 bool DynamixelMotor::getCurrentAngle(float &angle)
 {
-    std::string returnPacket = manager.sendPacket(makeReadPacket(motorData.currentAngle));
+    String returnPacket = manager.sendPacket(makeReadPacket(motorData.currentAngle));
     bool status = decapsulatePacket(returnPacket,angle);
     angle *= getAngleFromValue();
 
@@ -92,13 +92,13 @@ bool DynamixelMotor::setGoalVelocity(float targetVelocity)
         parameter[i] = targetVelocityValue & 0xFF;
         targetVelocityValue = targetVelocityValue >> 8;
     }
-    std::string returnPacket = manager.sendPacket(makeWritePacket(motorData.goalVelocity,parameter));
+    String returnPacket = manager.sendPacket(makeWritePacket(motorData.goalVelocity,parameter));
     return(decapsulatePacket(returnPacket));
 }
 
 bool DynamixelMotor::getCurrentVelocity(float &velocity)
 {
-    std::string returnPacket = manager.sendPacket(makeReadPacket(motorData.currentVelocity));
+    String returnPacket = manager.sendPacket(makeReadPacket(motorData.currentVelocity));
     bool status = decapsulatePacket(returnPacket,velocity);
     velocity *= getVelocityFromValue();
 
@@ -107,7 +107,7 @@ bool DynamixelMotor::getCurrentVelocity(float &velocity)
 
 bool DynamixelMotor::getCurrentTorque(float &torque)
 {
-    std::string returnPacket = manager.sendPacket(makeReadPacket(motorData.currentTorque));
+    String returnPacket = manager.sendPacket(makeReadPacket(motorData.currentTorque));
     bool status = decapsulatePacket(returnPacket,torque);
     torque *= getTorqueFromValue();
 

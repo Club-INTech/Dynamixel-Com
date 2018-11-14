@@ -69,7 +69,7 @@ DynamixelPacket* XL430::makeReadPacket(DynamixelAccessData)
 
 }
 
-bool XL430::decapsulatePacket(const std::string &packet)
+bool XL430::decapsulatePacket(const String& packet)
 {
     unsigned short responseLength = dynamixelV2::minResponseLength + packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8);
 
@@ -86,7 +86,7 @@ bool XL430::decapsulatePacket(const std::string &packet)
 }
 
 
-bool XL430::decapsulatePacket(const std::string& packet, float &value)
+bool XL430::decapsulatePacket(const String& packet, float &value)
 {
     if(decapsulatePacket(packet))
     {

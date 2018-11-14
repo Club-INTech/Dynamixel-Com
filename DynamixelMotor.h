@@ -8,7 +8,6 @@
 #include "Arduino.h"
 #include "DynamixelUtils.h"
 #include "DynamixelManager.h"
-#include <string>
 
 
 //! Abstract class for Dynamixel Motors
@@ -26,7 +25,7 @@ public:
 
 
     /*!
-     * \name Defined functions
+     * \name Pre-defined functions
      * These functions do not usually need to be overridden and can be used as is, provided the pure virtual functions
      * are defined.
      * \warning These functions are defined using little endian.
@@ -52,7 +51,7 @@ public:
 
     /*!
      * \name Functions to override
-     * These functions *have* to be properly defined otherwise the defined functions will not work.
+     * These functions *have* to be properly defined otherwise the Pre-defined functions will not work.
      * \sa XL430 for implementation example.
      */
     //!@{
@@ -65,14 +64,14 @@ public:
      * Checks error-detection codes and packet status
      * @return false if there is any error, true otherwise.
      */
-    virtual bool decapsulatePacket(const std::string&) = 0;
+    virtual bool decapsulatePacket(const String&) = 0;
 
     //! Checks status packet and extracts data
     /*!
      * Calls decapsulatePacket(const std::string&) for error checking and extracts data if everything is right.
      * @return false if there is any error, true otherwise.
      */
-    virtual bool decapsulatePacket(const std::string&, float&) = 0;
+    virtual bool decapsulatePacket(const String&, float&) = 0;
     //!@}
 
 protected:
