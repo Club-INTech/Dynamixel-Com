@@ -14,9 +14,10 @@ String DynamixelManager::sendPacket(DynamixelPacket *packet) const
 {
 
 #ifdef DYN_VERBOSE
-    for(int i = 0;i<packet->packetSize;i++)
+    Serial.printf("Sent (%i):\n",packet->dataSize)
+    for(int i = 0;i<packet->dataSize;i++)
     {
-        Serial.print(*(packet->packetData+i));
+        Serial.print(*(packet->data+i));
         Serial.print(",");
     }
     Serial.println("");
@@ -40,7 +41,7 @@ String DynamixelManager::sendPacket(DynamixelPacket *packet) const
         delete packet;
 
 #ifdef DYN_VERBOSE
-        Serial.println("Received: ");
+        Serial.printf("Received (%i):\n",response.length());
         for(unsigned int i = 0; i < response.length(); i++)
         {
             Serial.print((int)response[i]);
