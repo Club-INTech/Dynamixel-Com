@@ -30,8 +30,8 @@ std::string DynamixelManager::sendPacket(DynamixelPacket *packet) const
     else
     {
         char* buffer = new char[packet->responseSize+1];
-        serial->readBytes(buffer,packet->responseSize+1);
-        std::string response (buffer,packet->responseSize+1);
+        serial->readBytes(buffer,packet->responseSize);
+        std::string response (buffer,packet->responseSize);
 
         delete[] buffer;
         delete packet;
