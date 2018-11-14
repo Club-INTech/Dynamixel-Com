@@ -55,8 +55,8 @@ public:
      * \sa XL430 for implementation example.
      */
     //!@{
-    virtual DynamixelPacket* makeWritePacket(DynamixelAccessData, unsigned char*) = 0;
-    virtual DynamixelPacket* makeReadPacket(DynamixelAccessData) = 0;
+    virtual DynamixelPacketData* makeWritePacket(DynamixelAccessData, char *) = 0;
+    virtual DynamixelPacketData* makeReadPacket(DynamixelAccessData) = 0;
 
 
     //! Checks status packet
@@ -64,14 +64,14 @@ public:
      * Checks error-detection codes and packet status
      * @return false if there is any error, true otherwise.
      */
-    virtual bool decapsulatePacket(const String&) = 0;
+    virtual bool decapsulatePacket(const char *) = 0;
 
     //! Checks status packet and extracts data
     /*!
      * Calls decapsulatePacket(const std::string&) for error checking and extracts data if everything is right.
      * @return false if there is any error, true otherwise.
      */
-    virtual bool decapsulatePacket(const String&, float&) = 0;
+    virtual bool decapsulatePacket(const char *, float &) = 0;
     //!@}
 
 protected:

@@ -32,12 +32,13 @@ public:
      * @param packet
      * @return Response string, eventually empty.
      */
-    String sendPacket(DynamixelPacket *) const;
+    char* sendPacket(DynamixelPacketData *) const;
 
+    char* rxBuffer;
+    char* txBuffer;
 private:
 
     HardwareSerial* serial;
-
 };
 
 #endif //DYN_MANAGER_H

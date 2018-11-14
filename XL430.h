@@ -17,10 +17,10 @@ class XL430 : public DynamixelMotor
 public:
     explicit XL430(uint8_t,const DynamixelManager &);
 
-    DynamixelPacket* makeWritePacket(DynamixelAccessData, unsigned char*) override;
-    DynamixelPacket* makeReadPacket(DynamixelAccessData) override;
-    bool decapsulatePacket(const String&) override;
-    bool decapsulatePacket(const String&, float&) override;
+    DynamixelPacketData* makeWritePacket(DynamixelAccessData, char *) override;
+    DynamixelPacketData* makeReadPacket(DynamixelAccessData) override;
+    bool decapsulatePacket(const char *) override;
+    bool decapsulatePacket(const char *, float &) override;
 
     //! The static members are used in order to minimize the memory usage of each individual object.
 private:

@@ -19,7 +19,7 @@
  * \li Positions of useful data
  */
 enum dynamixelV2{
-    minPacketLenght = 12,       //!< With checksum
+    minPacketLength = 12,       //!< With checksum
     minInstructionLength = 5,   //!< Without checksum
     minResponseLength = 5,      //!< Without checksum
     writeInstruction = 0x03,
@@ -117,19 +117,14 @@ struct DynamixelMotorData {
  * The main goal of this struct is to allow the DynamixelManager to send and receive messages without any knowledge of
  * the underlying protocols. Thus, we can use any motor with any protocol.
  */
-struct DynamixelPacket {
+struct DynamixelPacketData {
 
     //!Packet without expected response : status packets will be ignored.
-    DynamixelPacket(const unsigned char* packet, uint8_t length) : data(packet), dataSize(length), responseSize(0)
+    DynamixelPacketData(uint8_t length) : dataSize(length), responseSize(0)
     {}
-    DynamixelPacket(const unsigned char* packet, uint8_t length, uint8_t responseLength) : data(packet), dataSize(length), responseSize(responseLength)
+    DynamixelPacketData(uint8_t length, uint8_t responseLength) : dataSize(length), responseSize(responseLength)
     {}
-    ~DynamixelPacket()
-    {
-        delete[] data;
-    }
 
-    const unsigned char* data;
     const uint8_t dataSize;           //!< Length of data to send through serial.
     const uint8_t responseSize;         //!< Expected response size. If too big, serial will timeout.
 };
@@ -187,7 +182,7 @@ constexpr unsigned short crc_table[256] = {
  * @param packet_size
  * @return 1 byte checksum
  */
-static unsigned char v1Checksum(const unsigned char *packet_to_check, unsigned short packet_size)
+static unsigned char v1Checksum(const char *packet_to_check, unsigned short packet_size)
 {
     int tempSum = 0;
     for(int i=0;i<packet_size;i++)
@@ -206,7 +201,7 @@ static unsigned char v1Checksum(const unsigned char *packet_to_check, unsigned s
  * @param packet_size
  * @return 2 Byte, little endian crc
  */
-static unsigned short crc_compute(const unsigned char *packet_to_check, unsigned short packet_size)
+static unsigned short crc_compute(const char *packet_to_check, unsigned short packet_size)
 {
     unsigned short crc_accum = 0;
     unsigned short i, j;

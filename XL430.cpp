@@ -23,10 +23,10 @@ XL430::XL430(uint8_t id, const DynamixelManager& dynamixelManager) : DynamixelMo
 
 }
 
-DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned char * parameters)
+DynamixelPacketData* XL430::makeWritePacket(DynamixelAccessData accessData, char *parameters)
 {
-    uint8_t packetSize = dynamixelV2::minPacketLenght+accessData.length;
-    unsigned char* packet = new unsigned char[packetSize];
+    uint8_t packetSize = dynamixelV2::minPacketLength+accessData.length;
+    char* packet = manager.txBuffer;
 
     int position = 0;
     for(int i=0;i<4;i++)
@@ -61,23 +61,23 @@ DynamixelPacket* XL430::makeWritePacket(DynamixelAccessData accessData, unsigned
     position++;
     packet[position] = (crc >> 8) & 0xFF;
 
-    return(new DynamixelPacket(packet,packetSize,11));
+    return(new DynamixelPacketData(packetSize,11));
 }
 
-DynamixelPacket* XL430::makeReadPacket(DynamixelAccessData)
+DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData)
 {
 
 }
 
-bool XL430::decapsulatePacket(const String& packet)
+bool XL430::decapsulatePacket(const char *packet)
 {
     unsigned short responseLength = dynamixelV2::minResponseLength + packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8);
 
     // Checks CRC
-    if(crc_compute((unsigned char*)packet.c_str(),responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
+    if(crc_compute(packet,responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
         // If valid, checks alert byte and instruction type
-        if(!((unsigned int)packet[8] & dynamixelV2::alertBit) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
+        if(!((uint8_t)packet[8] & dynamixelV2::alertBit) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
         {
             return(true);
         }
@@ -86,7 +86,7 @@ bool XL430::decapsulatePacket(const String& packet)
 }
 
 
-bool XL430::decapsulatePacket(const String& packet, float &value)
+bool XL430::decapsulatePacket(const char *packet, float &value)
 {
     if(decapsulatePacket(packet))
     {

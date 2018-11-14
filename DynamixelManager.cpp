@@ -7,10 +7,13 @@
 // TODO : Try to generalize for different baudrates and serials
 DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial) : serial(dynamixelSerial)
 {
+    txBuffer = new char[30];
+    rxBuffer = new char[30];
+
     serial->begin(57600);
 }
 
-String DynamixelManager::sendPacket(DynamixelPacket *packet) const
+char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
 
 #ifdef DYN_VERBOSE
@@ -23,20 +26,21 @@ String DynamixelManager::sendPacket(DynamixelPacket *packet) const
     Serial.println("");
 #endif
 
-    serial->write(packet->data,packet->dataSize);       // Sends packet
+    serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
-    char* clearBuffer = new char[packet->dataSize];
-    serial->readBytes(clearBuffer,packet->dataSize);      // Reads sent packet to clear serial
+    serial->readBytes(txBuffer,packet->dataSize);   // Reads sent packet to clear serial
+
+    memset(txBuffer,0,packet->dataSize);            // Clears transmission buffer
 
 
     if(packet->responseSize == 0 )
     {
         delete packet;
-        return String();
+        return nullptr;
     }
     else
     {
-        String response = serial->readString(packet->responseSize);
+        serial->readBytes(rxBuffer,packet->responseSize);
 
         delete packet;
 
@@ -50,6 +54,6 @@ String DynamixelManager::sendPacket(DynamixelPacket *packet) const
         Serial.println("");
 #endif
 
-        return(response);
+        return(txBuffer);
     }
 }
