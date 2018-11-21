@@ -31,7 +31,8 @@ enum dynamixelV2{
     lengthLSBPos = 5,
     lengthMSBPos = 6,
     instructionPos = 7,
-    responseParameterStart = 8
+    responseErrorPos = 8,
+    responseParameterStart = 9
 };
 
 constexpr unsigned char v1Header[2] = {0xFF,0xFF};
