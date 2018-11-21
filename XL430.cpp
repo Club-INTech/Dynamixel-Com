@@ -64,9 +64,39 @@ DynamixelPacketData* XL430::makeWritePacket(DynamixelAccessData accessData, char
     return(new DynamixelPacketData(packetSize,11));
 }
 
-DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData)
-{
 
+DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData accessData)
+{
+    uint8_t packetSize = dynamixelV2::minPacketLength+2;
+    char* packet = manager.txBuffer;
+    unsigned int position = 0;
+    // HEADER
+    for(unsigned char headerPart : v2Header) {
+        packet[position++] = headerPart;
+    }
+
+    // Packet ID
+    packet[position++] = motorData.motorID;
+    motorID = motorData.motorID;
+
+    // Instruction Length: 4(params) +3
+    packet[position++] = 7;
+    packet[position++] = 0;
+
+    // Instruction
+    packet[position++] = dynamixelV2::readInstruction;
+    // Params: Start, Length
+    packet[position++] = accessData.address[0];
+    packet[position++] = accessData.address[1];
+
+    packet[position++] = accessData.length & 0xFF;
+    packet[position++] = (accessData.length >> 8) & 0xFF;
+
+    unsigned short crc = crc_compute(packet, packetSize-2);
+    packet[position++] = crc & 0xFF;
+    packet[position++] = (crc >> 8) & 0xFF;
+
+    return(new DynamixelPacketData(packetSize, 11+accessData.length));
 }
 
 bool XL430::decapsulatePacket(const char *packet)

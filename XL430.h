@@ -23,16 +23,16 @@ public:
     bool decapsulatePacket(const char *, float &) override;
 
     //! The static members are used in order to minimize the memory usage of each individual object.
-private:
-
+    static const DynamixelAccessData& xl430GoalAngle;
     static const DynamixelAccessData& xl430ID;
     static const DynamixelAccessData& xl430LED;
     static const DynamixelAccessData& xl430TorqueEnable;
     static const DynamixelAccessData& xl430CurrentTorque;
-    static const DynamixelAccessData& xl430GoalAngle;
     static const DynamixelAccessData& xl430CurrentAngle;
     static const DynamixelAccessData& xl430GoalVelocity;
     static const DynamixelAccessData& xl430CurrentVelocity;
+
+private:
 
     static constexpr float torqueConversionFactor = 0.0015;
     static constexpr float angleConversionFactor = 0.088;

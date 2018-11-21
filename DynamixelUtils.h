@@ -19,11 +19,13 @@
  * \li Positions of useful data
  */
 enum dynamixelV2{
+    broadcastId = 0xFE,
     minPacketLength = 12,       //!< With checksum
     minInstructionLength = 5,   //!< Without checksum
     minResponseLength = 5,      //!< Without checksum
     writeInstruction = 0x03,
-    readInstruction,
+    readInstruction = 0x02,
+    syncWriteInstruction = 0x83,
     statusInstruction = 0x55,
     alertBit = 128,
     lengthLSBPos = 5,
