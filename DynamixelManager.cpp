@@ -19,13 +19,13 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
 #ifdef DYN_VERBOSE
-    Serial.printf("Sent (%i):\n",packet->dataSize);
+    Serial2.printf("Sent (%i):\n",packet->dataSize);
     for(int i = 0;i<packet->dataSize;i++)
     {
-        Serial.print((int)(txBuffer[i]));
-        Serial.print(",");
+        Serial2.print((int)(txBuffer[i]));
+        Serial2.print(",");
     }
-    Serial.println("");
+    Serial2.println("");
 #endif
 
     serial->readBytes(txBuffer,packet->dataSize);   // Reads sent packet to clear serial
@@ -45,13 +45,13 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         delete packet;
 
 #ifdef DYN_VERBOSE
-        Serial.printf("Received (%i):\n",packet->responseSize);
+        Serial2.printf("Received (%i):\n",packet->responseSize);
         for(unsigned int i = 0; i < packet->responseSize; i++)
         {
-            Serial.print((int)rxBuffer[i]);
-            Serial.print(",");
+            Serial2.print((int)rxBuffer[i]);
+            Serial2.print(",");
         }
-        Serial.println("");
+        Serial2.println("");
 #endif
 
         return(rxBuffer);

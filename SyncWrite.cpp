@@ -23,17 +23,23 @@ void SyncWrite::setData(unsigned int motorIndex, char* data) {
 
 DynamixelPacketData* SyncWrite::preparePacket() {
     char* packet = manager.txBuffer;
-    uint8_t packetSize = (uint8_t) (4 + 1 + 2 + 1 + motorCount*length +2);
     unsigned int instrLength =  2 /* CRC */ + 2 /* Address */ + 2 /* Length */ + 1 /* Instruction */ + (length+1)*motorCount /* Data */;
+    uint8_t packetSize = (uint8_t) (instrLength + 4 /* header*/ + 1 /* id */ + 2 /* packet length */);
     unsigned int position = 0;
     for(char headerPart : v2Header) {
         packet[position++] = headerPart;
     }
 
     packet[position++] = dynamixelV2::broadcastId;
+    packet[position++] = instrLength & 0xFF;
+    packet[position++] = (instrLength >> 8) & 0xFF;
     packet[position++] = dynamixelV2::syncWriteInstruction;
-    packet[position++] = (char)(instrLength & 0xFF);
-    packet[position++] = (char)((instrLength >> 8) & 0xFF);
+
+    packet[position++] = address & 0xFF;
+    packet[position++] = (address >> 8) & 0xFF;
+
+    packet[position++] = length & 0xFF;
+    packet[position++] = (length >> 8) & 0xFF;
 
     for(unsigned int motorIndex = 0; motorIndex < motorCount; motorIndex++) {
         packet[position++] = motors[motorIndex]; // write motor ID
