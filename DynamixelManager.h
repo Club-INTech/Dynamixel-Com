@@ -22,7 +22,10 @@ class DynamixelManager {
 
 public:
 
-    DynamixelManager(HardwareSerial*);
+    /**
+     * Constructs a new DynamixelManager with the serial used for communication with Dynamixel motors and one for debugging that must have begun communication (with begin() ) (can be left to NULL if not needed)
+     */
+    DynamixelManager(HardwareSerial*, HardwareSerial*);
 
 
     /*!
@@ -39,6 +42,7 @@ public:
 private:
 
     HardwareSerial* serial;
+    HardwareSerial* debugSerial;
 };
 
 #endif //DYN_MANAGER_H

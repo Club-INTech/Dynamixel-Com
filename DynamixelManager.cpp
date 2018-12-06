@@ -5,7 +5,7 @@
 #include "DynamixelManager.h"
 
 // TODO : Try to generalize for different baudrates and serials
-DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial) : serial(dynamixelSerial)
+DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, HardwareSerial* debugSerial = NULL) : serial(dynamixelSerial), debugSerial(debugSerial)
 {
     txBuffer = new char[30];
     rxBuffer = new char[30];
@@ -17,15 +17,17 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
 
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
-
+    
 #ifdef DYN_VERBOSE
-    Serial2.printf("Sent (%i):\n",packet->dataSize);
-    for(int i = 0;i<packet->dataSize;i++)
-    {
-        Serial2.print((int)(txBuffer[i]));
-        Serial2.print(",");
+    if(debugSerial) {
+        debugSerial.printf("Sent (%i):\n",packet->dataSize);
+        for(int i = 0;i<packet->dataSize;i++)
+        {
+            debugSerial.print((int)(txBuffer[i]));
+            debugSerial.print(",");
+        }
+        debugSerial.println("");
     }
-    Serial2.println("");
 #endif
 
     serial->readBytes(txBuffer,packet->dataSize);   // Reads sent packet to clear serial
@@ -45,13 +47,15 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         delete packet;
 
 #ifdef DYN_VERBOSE
-        Serial2.printf("Received (%i):\n",packet->responseSize);
-        for(unsigned int i = 0; i < packet->responseSize; i++)
-        {
-            Serial2.print((int)rxBuffer[i]);
-            Serial2.print(",");
+        if(debugSerial) {
+            debugSerial.printf("Received (%i):\n",packet->responseSize);
+            for(unsigned int i = 0; i < packet->responseSize; i++)
+            {
+                debugSerial.print((int)rxBuffer[i]);
+                debugSerial.print(",");
+            }
+            debugSerial.println("");
         }
-        Serial2.println("");
 #endif
 
         return(rxBuffer);
