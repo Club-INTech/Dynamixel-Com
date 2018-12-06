@@ -45,6 +45,8 @@ public:
     virtual bool setGoalVelocity(float);
     virtual bool getCurrentVelocity(float&);
     virtual bool getCurrentTorque(float&);
+    virtual bool getOperatingMode(uint8_t&);
+    virtual bool setOperatingMode(uint8_t);
     //!@}
 
 
@@ -66,7 +68,7 @@ public:
      */
     virtual bool decapsulatePacket(const char *) = 0;
 
-    //! Checks status packet and extracts data
+    //! Checks status packet and extracts floating point data
     /*!
      * Calls decapsulatePacket(const std::string&) for error checking and extracts data if everything is right.
      * @return false if there is any error, true otherwise.

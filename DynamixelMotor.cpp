@@ -113,3 +113,20 @@ bool DynamixelMotor::getCurrentTorque(float &torque)
 
     return(status);
 }
+
+bool DynamixelMotor::getOperatingMode(uint8_t &mode)
+{
+    char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentOperatingMode));
+    float tmp;
+    bool status = decapsulatePacket(returnPacket, tmp);
+    mode = (uint8_t)tmp;
+
+    return(status);
+}
+
+bool DynamixelMotor::setOperatingMode(uint8_t mode)
+{
+    char parameter[1] = {mode};
+    char* returnPacket = manager.sendPacket(makeWritePacket(motorData.currentOperatingMode, parameter));
+    return(decapsulatePacket(returnPacket));
+}
