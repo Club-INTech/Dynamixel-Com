@@ -77,7 +77,7 @@ bool DynamixelMotor::getCurrentAngle(float &angle)
 {
     char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentAngle));
     bool status = decapsulatePacket(returnPacket,angle);
-    angle /= 2909;
+    angle /= 2909; // TODO: check if still needed since the read start address has been corrected
 
     return(status);
 }
@@ -116,7 +116,7 @@ bool DynamixelMotor::getCurrentTorque(float &torque)
 
 bool DynamixelMotor::getOperatingMode(uint8_t &mode)
 {
-    char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentOperatingMode));
+    char* returnPacket = manager.sendPacket(makeReadPacket(motorData.operatingMode));
     float tmp;
     bool status = decapsulatePacket(returnPacket, tmp);
     mode = (uint8_t)tmp;
@@ -127,6 +127,6 @@ bool DynamixelMotor::getOperatingMode(uint8_t &mode)
 bool DynamixelMotor::setOperatingMode(uint8_t mode)
 {
     char parameter[1] = {mode};
-    char* returnPacket = manager.sendPacket(makeWritePacket(motorData.currentOperatingMode, parameter));
+    char* returnPacket = manager.sendPacket(makeWritePacket(motorData.operatingMode, parameter));
     return(decapsulatePacket(returnPacket));
 }

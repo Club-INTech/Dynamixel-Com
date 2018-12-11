@@ -81,13 +81,13 @@ struct DynamixelMotorData {
                        const DynamixelAccessData& torqueEnAccess, const DynamixelAccessData& currentTorqueAccess,
                        const DynamixelAccessData& goalAngleAccess,const DynamixelAccessData& currentAngleAccess,
                        const DynamixelAccessData& goalVelocityAccess,const DynamixelAccessData& currentVelocityAccess,
-                       const DynamixelAccessData& currentOperatingMode,
+                       const DynamixelAccessData& operatingMode,
                        const float torqueConvertFactor,const float angleConvertFactor,const float velocityConvertFactor)
                         : motorID(newID), id(idAccess), led(ledAccess),
                           torqueEnable(torqueEnAccess), currentTorque(currentTorqueAccess),
                           goalAngle(goalAngleAccess), currentAngle(currentAngleAccess),
                           goalVelocity(goalVelocityAccess), currentVelocity(currentVelocityAccess),
-                          currentOperatingMode(currentOperatingMode),
+                          operatingMode(operatingMode),
                           valueToTorque(torqueConvertFactor), valueToAngle(angleConvertFactor),
                           valueToVelocity(velocityConvertFactor)
     {}
@@ -108,7 +108,7 @@ struct DynamixelMotorData {
     const DynamixelAccessData& currentAngle;
     const DynamixelAccessData& goalVelocity;
     const DynamixelAccessData& currentVelocity;
-    const DynamixelAccessData& currentOperatingMode;
+    const DynamixelAccessData& operatingMode;
 
     const float valueToTorque;
     const float valueToAngle;
