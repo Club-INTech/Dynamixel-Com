@@ -10,7 +10,7 @@
 enum XL430OperatingModes {
     VELOCITY_CONTROL_MODE = 1,
     POSITION_CONTROL_MODE = 3,
-    EXTENTED_POSITION_CONTROL_MODE = 4,
+    EXTENDED_POSITION_CONTROL_MODE = 4,
     PWN_CONTROL_MODE = 16,
 };
 
@@ -37,7 +37,7 @@ public:
     static const DynamixelAccessData& xl430CurrentAngle;
     static const DynamixelAccessData& xl430GoalVelocity;
     static const DynamixelAccessData& xl430CurrentVelocity;
-    static const DynamixelAccessData& xl430CurrentOperatingMode;
+    static const DynamixelAccessData& xl430OperatingMode;
 
 private:
 
