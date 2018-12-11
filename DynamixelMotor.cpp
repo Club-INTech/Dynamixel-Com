@@ -77,7 +77,7 @@ bool DynamixelMotor::getCurrentAngle(float &angle)
 {
     char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentAngle));
     bool status = decapsulatePacket(returnPacket,angle);
-    angle /= 2909; // TODO: check if still needed since the read start address has been corrected
+    angle *= getAngleFromValue();
 
     return(status);
 }
