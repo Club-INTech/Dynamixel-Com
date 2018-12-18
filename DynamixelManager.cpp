@@ -13,6 +13,13 @@ DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, HardwareSeri
     serial->begin(57600);
 }
 
+DynamixelMotor* DynamixelManager::createMotor(uint8_t id, MotorGeneratorFunctionType generator)
+{
+    DynamixelMotor* motor = generator(id, this);
+    motorMap.insert({id, motor});
+    return motor;
+}
+
 char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
 

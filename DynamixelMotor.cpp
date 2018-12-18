@@ -4,7 +4,7 @@
 
 #include "DynamixelMotor.h"
 
-DynamixelMotor::DynamixelMotor(uint8_t id, DynamixelMotorData data, const DynamixelManager& dynamixelManager) : manager(dynamixelManager),motorID(id), motorData(data)
+DynamixelMotor::DynamixelMotor(uint8_t id, DynamixelMotorData data, const DynamixelPacketSender& dynamixelManager) : manager(dynamixelManager),motorID(id), motorData(data)
 {
 
 }

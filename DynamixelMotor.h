@@ -7,7 +7,7 @@
 
 #include "Arduino.h"
 #include "DynamixelUtils.h"
-#include "DynamixelManager.h"
+#include "DynamixelPacketSender.h"
 
 
 //! Abstract class for Dynamixel Motors
@@ -20,7 +20,7 @@ class DynamixelMotor {
 
 public:
 
-    DynamixelMotor(uint8_t,DynamixelMotorData,const DynamixelManager &);
+    DynamixelMotor(uint8_t,DynamixelMotorData,const DynamixelPacketSender &);
 
 
 
@@ -78,7 +78,7 @@ public:
 
 protected:
 
-    const DynamixelManager& manager;
+    const DynamixelPacketSender& manager;
 
     uint8_t motorID;
 
