@@ -138,3 +138,8 @@ bool XL430::decapsulatePacket(const char *packet, float &value)
         return(false);
     }
 }
+
+
+DynamixelMotor* XL430GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender) {
+    return new XL430(id, *packetSender);
+}

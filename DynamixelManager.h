@@ -13,7 +13,7 @@
 
 // TODO : Rajouter les vraies fonctions de manager
 
-typedef DynamixelMotor* MotorGeneratorFunctionType(uint8_t, DynamixelPacketSender&);
+typedef DynamixelMotor* MotorGeneratorFunctionType(uint8_t, DynamixelPacketSender*);
 //!High-level DynamixelMotor interface
 /*!
  * The first goal of the DynamixelManager is to provide a way for every DynamixelMotor to communicate.

@@ -46,9 +46,7 @@ private:
     static constexpr float velocityConversionFactor = 0.229;
 };
 
-DynamixelMotor* XL430GeneratorFunction(uint8_t id, DynamixelPacketSender& packetSender) {
-    return new XL430(id, packetSender);
-}
+DynamixelMotor* XL430GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender);
 
 
 #endif //XL30_XL430_H
