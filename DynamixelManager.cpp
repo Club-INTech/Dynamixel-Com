@@ -56,6 +56,9 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     }
     else
     {
+        char* buffer = new char[packet->responseSize+1];
+        serial->readBytes(buffer,packet->responseSize);
+        std::string response (buffer,packet->responseSize);
 
         serial->readBytes(rxBuffer,packet->responseSize);
 
