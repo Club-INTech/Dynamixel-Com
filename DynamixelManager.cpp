@@ -20,6 +20,11 @@ DynamixelMotor* DynamixelManager::createMotor(uint8_t id, MotorGeneratorFunction
     return motor;
 }
 
+DynamixelMotor* DynamixelManager::getMotor(uint8_t id)
+{
+    return motorMap.at(id);
+}
+
 char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
 

@@ -46,6 +46,11 @@ public:
      * @return a new motor instance
      */
     DynamixelMotor* createMotor(uint8_t, MotorGeneratorFunctionType);
+
+    /*!
+     * Get a motor instance based on the given ID
+     */
+     DynamixelMotor* getMotor(uint8_t);
 private:
 
     std::map<uint8_t, DynamixelMotor*> motorMap;
