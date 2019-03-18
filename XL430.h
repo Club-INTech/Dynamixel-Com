@@ -38,6 +38,7 @@ public:
     static const DynamixelAccessData& xl430GoalVelocity;
     static const DynamixelAccessData& xl430CurrentVelocity;
     static const DynamixelAccessData& xl430OperatingMode;
+    static const DynamixelAccessData& xl430VelocityLimit;
 
 private:
 
