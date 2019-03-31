@@ -5,7 +5,7 @@
 #include "DynamixelManager.h"
 
 // TODO : Try to generalize for different baudrates and serials
-DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, HardwareSerial* debugSerial = NULL) : serial(dynamixelSerial), debugSerial(debugSerial)
+DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, usb_serial_class* debugSerial = NULL) : serial(dynamixelSerial), debugSerial(debugSerial)
 {
     txBuffer = new char[30];
     rxBuffer = new char[30];

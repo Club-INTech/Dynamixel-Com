@@ -44,7 +44,7 @@ public:
     virtual bool getCurrentAngle(float&);
     virtual bool setGoalVelocity(float);
     virtual bool getCurrentVelocity(float&);
-    virtual bool getCurrentTorque(float&);
+    virtual bool getCurrentTorque(int&);
     virtual bool getOperatingMode(uint8_t&);
     virtual bool setOperatingMode(uint8_t);
     //!@}
@@ -74,6 +74,8 @@ public:
      * @return false if there is any error, true otherwise.
      */
     virtual bool decapsulatePacket(const char *, float &) = 0;
+
+    virtual bool decapsulatePacket(const char *, int &) = 0;
     //!@}
 
 protected:

@@ -105,12 +105,21 @@ bool DynamixelMotor::getCurrentVelocity(float &velocity)
     return(status);
 }
 
-bool DynamixelMotor::getCurrentTorque(float &torque)
+/**
+ * Broken
+ */
+bool DynamixelMotor::getCurrentTorque(int &torque)
 {
+/* FIXME    char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentTorque));
+    int torqueInt = 0;
+    bool status = decapsulatePacket(returnPacket,torqueInt);
+    torque = torqueInt*0.1;
+*/
     char* returnPacket = manager.sendPacket(makeReadPacket(motorData.currentTorque));
-    bool status = decapsulatePacket(returnPacket,torque);
-    torque *= getTorqueFromValue();
-
+    int torqueInt = 0;
+    bool status = decapsulatePacket(returnPacket);
+    // something that ressembles torque
+    torque = returnPacket[9]; // magic numbers, yay!
     return(status);
 }
 

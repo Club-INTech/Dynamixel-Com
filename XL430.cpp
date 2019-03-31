@@ -9,7 +9,7 @@
 const DynamixelAccessData& XL430::xl430ID = DynamixelAccessData(0x07,0x00,1);
 const DynamixelAccessData& XL430::xl430LED = DynamixelAccessData(0x41,0x00,1);
 const DynamixelAccessData& XL430::xl430TorqueEnable = DynamixelAccessData(0x40,0x00,1);
-const DynamixelAccessData& XL430::xl430CurrentTorque = DynamixelAccessData(0x7e,0x00,2);
+const DynamixelAccessData& XL430::xl430CurrentTorque = DynamixelAccessData(126,0x00,2);
 const DynamixelAccessData& XL430::xl430GoalAngle = DynamixelAccessData(0x74,0x00,4);
 const DynamixelAccessData& XL430::xl430CurrentAngle = DynamixelAccessData(0x84,0x00,4);
 const DynamixelAccessData& XL430::xl430GoalVelocity = DynamixelAccessData(0x68,0x00,4);
@@ -119,8 +119,27 @@ bool XL430::decapsulatePacket(const char *packet)
     return(false);
 }
 
-
 bool XL430::decapsulatePacket(const char *packet, float &value)
+{
+    if(decapsulatePacket(packet))
+    {
+        int parameterLength = packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8) - 4;
+
+        for(int i = 0; i<parameterLength; i++)
+        {
+            value += (int)(packet[dynamixelV2::responseParameterStart+i] << 8*i);
+        }
+
+        return(true);
+    }
+    else
+    {
+        value = 0;
+        return(false);
+    }
+}
+
+bool XL430::decapsulatePacket(const char *packet, int &value)
 {
     if(decapsulatePacket(packet))
     {
