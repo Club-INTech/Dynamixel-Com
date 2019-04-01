@@ -42,6 +42,13 @@ public:
     char* sendPacket(DynamixelPacketData *) const override;
 
     /*!
+     * Reads a single DynamixelPacket from the serial port.
+     * @param responseSize the expected packet size
+     * @return The packet string.
+     */
+    char* readPacket(uint8_t responseSize) const override;
+
+    /*!
      * Creates a motor instance based on the given function, registered with the given ID
      * @return a new motor instance
      */
@@ -51,11 +58,12 @@ public:
      * Get a motor instance based on the given ID
      */
      DynamixelMotor* getMotor(uint8_t);
+
+    HardwareSerial* serial;
 private:
 
     std::map<uint8_t, DynamixelMotor*> motorMap;
 
-    HardwareSerial* serial;
     usb_serial_class* debugSerial;
 };
 

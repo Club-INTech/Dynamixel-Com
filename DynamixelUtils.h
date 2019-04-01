@@ -11,7 +11,7 @@
  * Protocol utilities
  */
 
-//!Dynamixel Potocol v2 magic values
+//!Dynamixel Protocol v2 magic values
 /*!
  * The enum contains useful values of the Dynamixel communication protocol 2.0. For example:
  * \li Minimum lengths of messages
@@ -26,8 +26,10 @@ enum dynamixelV2{
     writeInstruction = 0x03,
     readInstruction = 0x02,
     syncWriteInstruction = 0x83,
+    syncReadInstruction = 0x82,
     statusInstruction = 0x55,
     alertBit = 128,
+    idPos = 4,
     lengthLSBPos = 5,
     lengthMSBPos = 6,
     instructionPos = 7,

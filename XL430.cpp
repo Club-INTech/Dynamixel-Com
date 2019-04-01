@@ -15,7 +15,9 @@ const DynamixelAccessData& XL430::xl430CurrentAngle = DynamixelAccessData(0x84,0
 const DynamixelAccessData& XL430::xl430GoalVelocity = DynamixelAccessData(0x68,0x00,4);
 const DynamixelAccessData& XL430::xl430CurrentVelocity = DynamixelAccessData(0x80,0x00,4);
 const DynamixelAccessData& XL430::xl430OperatingMode = DynamixelAccessData(0x0B,0x00,1);
-const DynamixelAccessData& XL430::xl430VelocityLimit = DynamixelAccessData(44,0x00,4);
+const DynamixelAccessData& XL430::xl430VelocityLimit = DynamixelAccessData(112,0x00,4);
+const DynamixelAccessData& XL430::xl430Moving = DynamixelAccessData(122,0x00,1);
+const DynamixelAccessData& XL430::xl430ReturnDelay = DynamixelAccessData(9,0x00,1);
 
 XL430::XL430(uint8_t id, const DynamixelPacketSender& dynamixelManager) : DynamixelMotor(id, DynamixelMotorData(id, xl430ID,
                                           xl430LED,xl430TorqueEnable,xl430CurrentTorque, xl430GoalAngle, xl430CurrentAngle,

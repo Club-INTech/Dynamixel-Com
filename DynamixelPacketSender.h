@@ -13,6 +13,7 @@ public:
     char* txBuffer;
     char* rxBuffer;
     virtual char* sendPacket(DynamixelPacketData *) const = 0;
+    virtual char* readPacket(uint8_t responseSize) const = 0;
 
 private:
 

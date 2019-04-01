@@ -25,9 +25,37 @@ DynamixelMotor* DynamixelManager::getMotor(uint8_t id)
     return motorMap.at(id);
 }
 
+char* DynamixelManager::readPacket(uint8_t responseSize) const
+{
+//    memset(rxBuffer, 0, responseSize); // TODO: remove, only for testing
+
+    if(responseSize == 0 )
+    {
+        return nullptr;
+    }
+    else
+    {
+        serial->readBytes(rxBuffer,responseSize);
+
+#ifdef DYN_VERBOSE
+        if(debugSerial) {
+            debugSerial->printf("Received (%i):\n",responseSize);
+            for(unsigned int i = 0; i < responseSize; i++)
+            {
+                debugSerial->print((int)rxBuffer[i]);
+                debugSerial->print(",");
+            }
+            debugSerial->println("");
+        }
+#endif
+
+        return(rxBuffer);
+    }
+
+}
+
 char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
-
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
     
 #ifdef DYN_VERBOSE
@@ -41,37 +69,10 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         debugSerial->println("");
     }
 #endif
-
     serial->readBytes(txBuffer,packet->dataSize);   // Reads sent packet to clear serial
-
-    memset(rxBuffer, 0, packet->responseSize); // TODO: remove, only for testing
-
     memset(txBuffer,0,packet->dataSize);            // Clears transmission buffer
+    uint8_t responseSize = packet->responseSize;
+    delete packet;
 
-
-    if(packet->responseSize == 0 )
-    {
-        delete packet;
-        return nullptr;
-    }
-    else
-    {
-        serial->readBytes(rxBuffer,packet->responseSize);
-
-        delete packet;
-
-#ifdef DYN_VERBOSE
-        if(debugSerial) {
-            debugSerial->printf("Received (%i):\n",packet->responseSize);
-            for(unsigned int i = 0; i < packet->responseSize; i++)
-            {
-                debugSerial->print((int)rxBuffer[i]);
-                debugSerial->print(",");
-            }
-            debugSerial->println("");
-        }
-#endif
-
-        return(rxBuffer);
-    }
+    return readPacket(responseSize);
 }
