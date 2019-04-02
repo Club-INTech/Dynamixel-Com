@@ -52,7 +52,7 @@ DynamixelPacketData* SyncWrite::preparePacket() {
     packet[position++] = crc & 0xFF;
     packet[position++] = (crc >> 8) & 0xFF;
 
-    return(new DynamixelPacketData(packetSize, 11));
+    return(new DynamixelPacketData(packetSize, 0));
 }
 
 bool SyncWrite::send() {

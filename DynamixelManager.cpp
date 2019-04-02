@@ -70,6 +70,16 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     }
 #endif
     serial->readBytes(txBuffer,packet->dataSize);   // Reads sent packet to clear serial
+    if(debugSerial) {
+        debugSerial->printf("Sent (read from Serial) (%i):\n",packet->dataSize);
+        for(int i = 0;i<packet->dataSize;i++)
+        {
+            debugSerial->print((int)(txBuffer[i]));
+            debugSerial->print(",");
+        }
+        debugSerial->println("");
+    }
+
     memset(txBuffer,0,packet->dataSize);            // Clears transmission buffer
     uint8_t responseSize = packet->responseSize;
     delete packet;
