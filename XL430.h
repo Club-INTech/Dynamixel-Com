@@ -44,6 +44,7 @@ public:
     static const DynamixelAccessData& xl430MovingStatus;
     static const DynamixelAccessData& xl430ReturnDelay;
     static const DynamixelAccessData& xl430HardwareError;
+    static const DynamixelAccessData& xl430MovingThreshold;
 
 private:
 

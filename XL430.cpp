@@ -20,6 +20,7 @@ const DynamixelAccessData& XL430::xl430Moving = DynamixelAccessData(122,0x00,1);
 const DynamixelAccessData& XL430::xl430MovingStatus = DynamixelAccessData(123,0x00,1);
 const DynamixelAccessData& XL430::xl430ReturnDelay = DynamixelAccessData(9,0x00,1);
 const DynamixelAccessData& XL430::xl430HardwareError = DynamixelAccessData(70,0x00,1);
+const DynamixelAccessData& XL430::xl430MovingThreshold = DynamixelAccessData(24,0x00,4);
 
 XL430::XL430(uint8_t id, const DynamixelPacketSender& dynamixelManager) : DynamixelMotor(id, DynamixelMotorData(id, xl430ID,
                                           xl430LED,xl430TorqueEnable,xl430CurrentTorque, xl430GoalAngle, xl430CurrentAngle,

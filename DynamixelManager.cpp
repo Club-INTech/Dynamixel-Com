@@ -27,7 +27,7 @@ DynamixelMotor* DynamixelManager::getMotor(uint8_t id)
 
 char* DynamixelManager::readPacket(uint8_t responseSize) const
 {
-//    memset(rxBuffer, 0, responseSize); // TODO: remove, only for testing
+    memset(rxBuffer, 0, responseSize);
 
     if(responseSize == 0 )
     {
@@ -35,8 +35,14 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
     }
     else
     {
-        serial->readBytes(rxBuffer,responseSize);
-
+        if(serial->readBytes(rxBuffer,responseSize) == 0) {
+            delay(100);
+#ifdef DYN_VERBOSE
+            if(debugSerial) {
+                debugSerial->printf("[Dynamixel-Com] Nothing to read (expecting %i) ...\n", responseSize);
+            }
+#endif
+        }
 #ifdef DYN_VERBOSE
         if(debugSerial) {
             debugSerial->printf("Received (%i):\n",responseSize);
@@ -56,8 +62,9 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
 
 char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
+    debugSerial->printf("Available for writing is %i\n", serial->availableForWrite());
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
-    
+
 #ifdef DYN_VERBOSE
     if(debugSerial) {
         debugSerial->printf("Sent (%i):\n",packet->dataSize);
