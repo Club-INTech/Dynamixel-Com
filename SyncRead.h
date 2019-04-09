@@ -13,6 +13,7 @@
 class SyncRead {
 public:
     SyncRead(const DynamixelManager &, unsigned int, uint16_t, uint16_t);
+    SyncRead(const DynamixelManager &, unsigned int, const DynamixelAccessData& data);
 
     /**
      * Sets up the motor IDs in the chain

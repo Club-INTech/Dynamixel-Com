@@ -18,6 +18,12 @@ public:
     SyncWrite(const DynamixelManager &, unsigned int, uint16_t, uint16_t);
 
     /**
+     * Same as {@see SyncWrite(const DynamixelManager &, unsigned int, uint16_t, uint16_t)} but with a DynamixelAccessData reference
+     * @param data
+     */
+    SyncWrite(const DynamixelManager &, unsigned int, const DynamixelAccessData& data);
+
+    /**
      * Sets up the motor IDs in the chain
      */
     void setMotorID(unsigned int, uint8_t);

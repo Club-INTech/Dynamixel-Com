@@ -4,6 +4,10 @@
 
 #include "SyncRead.h"
 
+SyncRead::SyncRead(const DynamixelManager& manager, const unsigned int motorCount, const DynamixelAccessData& data): manager(manager), motorCount(motorCount), address((uint16_t ) (data.address[0] | (data.address[1] << 8))), length(data.length) {
+    motors = new uint8_t[motorCount];
+}
+
 SyncRead::SyncRead(const DynamixelManager& manager, const unsigned int motorCount, const uint16_t address, const uint16_t length): manager(manager), motorCount(motorCount), address(address), length(length) {
     motors = new uint8_t[motorCount];
 }
