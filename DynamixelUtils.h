@@ -11,6 +11,32 @@
  * Protocol utilities
  */
 
+//!Dynamixel Protocol v1 magic values
+/*!
+ * The enum contains useful values of the Dynamixel communication protocol 1.0. For example:
+ * \li Minimum lengths of messages
+ * \li Instruction values
+ * \li Positions of useful data
+ */
+enum class dynamixelV1
+{
+    broadcastId = 0xFE,
+    minPacketLength = 7,             //!< With checksum
+    minWriteInstructionLength = 3,   //!< With checksum instruction (1) + address (1) + Checksum (1)
+    minResponseLength = 5,           //!< Without checksum
+    headerLength = 3,                //!< Header+ID+Length-CKSM
+    statusResponseLength = 6,
+    writeInstruction = 0x03,
+    readInstruction = 0x02,
+    syncWriteInstruction = 0x83,
+    alertBit = 128,
+    idPos = 2,
+    lengthPos = 3,
+    instructionPos = 4,
+    responseErrorPos = 4,
+    responseParameterStart = 5
+};
+
 //!Dynamixel Protocol v2 magic values
 /*!
  * The enum contains useful values of the Dynamixel communication protocol 2.0. For example:
@@ -18,11 +44,14 @@
  * \li Instruction values
  * \li Positions of useful data
  */
-enum dynamixelV2{
+enum class dynamixelV2
+{
     broadcastId = 0xFE,
-    minPacketLength = 12,       //!< With checksum
-    minInstructionLength = 5,   //!< Without checksum
-    minResponseLength = 5,      //!< Without checksum
+    minPacketLength = 12,            //!< With checksum
+    minWriteInstructionLength = 5,   //!< With checksum instruction (1) + address (2) + CRC (2)
+    minResponseLength = 5,           //!< Without checksum
+    headerLength = 5,                //!< Header+ID+Length-CRC
+    statusResponseLength = 11,
     writeInstruction = 0x03,
     readInstruction = 0x02,
     syncWriteInstruction = 0x83,

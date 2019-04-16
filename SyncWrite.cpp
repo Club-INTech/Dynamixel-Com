@@ -35,10 +35,10 @@ DynamixelPacketData* SyncWrite::preparePacket() {
         packet[position++] = headerPart;
     }
 
-    packet[position++] = dynamixelV2::broadcastId;
+    packet[position++] = (uint8_t)dynamixelV2::broadcastId;
     packet[position++] = instrLength & 0xFF;
     packet[position++] = (instrLength >> 8) & 0xFF;
-    packet[position++] = dynamixelV2::syncWriteInstruction;
+    packet[position++] = (uint8_t)dynamixelV2::syncWriteInstruction;
 
     packet[position++] = address & 0xFF;
     packet[position++] = (address >> 8) & 0xFF;

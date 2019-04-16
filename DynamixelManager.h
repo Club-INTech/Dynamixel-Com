@@ -29,7 +29,7 @@ public:
     /**
      * Constructs a new DynamixelManager with the serial used for communication with Dynamixel motors and one for debugging that must have begun communication (with begin() ) (can be left to NULL if not needed)
      */
-    explicit DynamixelManager(HardwareSerial*, usb_serial_class*);
+    explicit DynamixelManager(HardwareSerial*, usb_serial_class*  = nullptr);
 
 
     /*!

@@ -21,7 +21,7 @@ enum XL430OperatingModes {
 class XL430 : public DynamixelMotor
 {
 public:
-    explicit XL430(uint8_t,const DynamixelPacketSender &);
+    XL430(uint8_t,const DynamixelPacketSender &);
 
     DynamixelPacketData* makeWritePacket(DynamixelAccessData, char *) override;
     DynamixelPacketData* makeReadPacket(DynamixelAccessData) override;

@@ -25,10 +25,10 @@ DynamixelPacketData* SyncRead::preparePacket() {
         packet[position++] = headerPart;
     }
 
-    packet[position++] = dynamixelV2::broadcastId;
+    packet[position++] = (uint8_t)dynamixelV2::broadcastId;
     packet[position++] = instrLength & 0xFF;
     packet[position++] = (instrLength >> 8) & 0xFF;
-    packet[position++] = dynamixelV2::syncReadInstruction;
+    packet[position++] = (uint8_t)dynamixelV2::syncReadInstruction;
 
     packet[position++] = address & 0xFF;
     packet[position++] = (address >> 8) & 0xFF;
@@ -53,7 +53,7 @@ bool SyncRead::read(char* result) {
     for(uint8_t i = 0; i < motorCount; i++) {
         char* response = manager.readPacket(expectedPacketSize);
         // TODO: check validity with CRC
-        uint8_t motorID = (uint8_t)response[dynamixelV2::idPos];
+        uint8_t motorID = (uint8_t)response[(uint8_t)dynamixelV2::idPos];
 
         // find corresponding index
         // it is possible that the packets are out of order (the datasheet makes no guarantee)
@@ -66,7 +66,7 @@ bool SyncRead::read(char* result) {
         }
 
         for (uint8_t byteIndex = 0; byteIndex < length; byteIndex++) {
-            result[index*length+byteIndex] = response[dynamixelV2::responseParameterStart+byteIndex];
+            result[index*length+byteIndex] = response[(uint8_t)dynamixelV2::responseParameterStart+byteIndex];
         }
     }
     return true;// TODO return decapsulatePacket(returnPacket);

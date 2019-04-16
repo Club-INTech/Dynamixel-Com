@@ -35,25 +35,25 @@ XL430::XL430(uint8_t id, const DynamixelPacketSender& dynamixelManager) : Dynami
 
 DynamixelPacketData* XL430::makeWritePacket(DynamixelAccessData accessData, char *parameters)
 {
-    uint8_t packetSize = dynamixelV2::minPacketLength+accessData.length;
+    uint8_t packetSize = (uint8_t)dynamixelV2::minPacketLength+accessData.length;
     char* packet = manager.txBuffer;
 
     int position = 0;
-    for(int i=0;i<4;i++)
+    for(uint8_t i : v2Header)
     {
-        packet[position] = v2Header[i];
+        packet[position] = i;
         position ++;
     }
 
     packet[position] = motorData.motorID;
     motorData.motorID = motorID;            // This allows to change motor ID and keep communicating
     position ++;
-    int instructionsLength = dynamixelV2::minInstructionLength+accessData.length;
+    uint16_t instructionsLength = (uint8_t)dynamixelV2::minWriteInstructionLength+accessData.length;
     packet[position] = instructionsLength & 0xFF;
     position++;
     packet[position] = (instructionsLength >> 8) & 0xFF;
     position++;
-    packet[position] = dynamixelV2::writeInstruction;
+    packet[position] = (uint8_t)dynamixelV2::writeInstruction;
     position++;
     packet[position] = accessData.address[0];
     position++;
@@ -66,18 +66,18 @@ DynamixelPacketData* XL430::makeWritePacket(DynamixelAccessData accessData, char
         position++;
     }
 
-    unsigned short crc = crc_compute(packet,instructionsLength+5);
+    unsigned short crc = crc_compute(packet,instructionsLength+(uint8_t)dynamixelV2::headerLength);
     packet[position] = crc & 0xFF;
     position++;
     packet[position] = (crc >> 8) & 0xFF;
 
-    return(new DynamixelPacketData(packetSize,11));
+    return(new DynamixelPacketData(packetSize,(uint8_t)dynamixelV2::statusResponseLength));
 }
 
 
 DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData accessData)
 {
-    uint8_t packetSize = dynamixelV2::minPacketLength+2;
+    uint8_t packetSize = (uint8_t)dynamixelV2::minPacketLength+2;
     char* packet = manager.txBuffer;
     unsigned int position = 0;
     // HEADER
@@ -94,7 +94,7 @@ DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData accessData)
     packet[position++] = 0;
 
     // Instruction
-    packet[position++] = dynamixelV2::readInstruction;
+    packet[position++] = (uint8_t)dynamixelV2::readInstruction;
     // Params: Start, Length
     packet[position++] = accessData.address[0];
     packet[position++] = accessData.address[1];
@@ -111,13 +111,13 @@ DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData accessData)
 
 bool XL430::decapsulatePacket(const char *packet)
 {
-    unsigned short responseLength = dynamixelV2::minResponseLength + packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8);
+    unsigned short responseLength = (uint8_t)dynamixelV2::minResponseLength + packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8);
 
     // Checks CRC
     if(crc_compute(packet,responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
         // If valid, checks alert byte and instruction type
-        if(!((uint8_t)packet[8] & dynamixelV2::alertBit) && (int)packet[dynamixelV2::instructionPos] == dynamixelV2::statusInstruction)
+        if(!((uint8_t)packet[8] & (uint8_t)dynamixelV2::alertBit) && (int)packet[(uint8_t)dynamixelV2::instructionPos] == (uint8_t)dynamixelV2::statusInstruction)
         {
             return(true);
         }
@@ -129,11 +129,11 @@ bool XL430::decapsulatePacket(const char *packet, float &value)
 {
     if(decapsulatePacket(packet))
     {
-        int parameterLength = packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8) - 4;
+        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
 
         for(int i = 0; i<parameterLength; i++)
         {
-            value += (int)(packet[dynamixelV2::responseParameterStart+i] << 8*i);
+            value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);
         }
 
         return(true);
@@ -149,11 +149,11 @@ bool XL430::decapsulatePacket(const char *packet, int &value)
 {
     if(decapsulatePacket(packet))
     {
-        int parameterLength = packet[dynamixelV2::lengthLSBPos] + (packet[dynamixelV2::lengthMSBPos] << 8) - 4;
+        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
 
         for(int i = 0; i<parameterLength; i++)
         {
-            value += (int)(packet[dynamixelV2::responseParameterStart+i] << 8*i);
+            value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);
         }
 
         return(true);
