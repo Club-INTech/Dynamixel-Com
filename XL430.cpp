@@ -89,8 +89,8 @@ DynamixelPacketData* XL430::makeReadPacket(DynamixelAccessData accessData)
     packet[position++] = motorData.motorID;
     motorID = motorData.motorID;
 
-    // Instruction Length: 4(params) +3
-    packet[position++] = 7;
+    // Instruction Length
+    packet[position++] = (uint8_t)dynamixelV2::readInstructionLength;
     packet[position++] = 0;
 
     // Instruction
@@ -117,7 +117,7 @@ bool XL430::decapsulatePacket(const char *packet)
     if(crc_compute(packet,responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
         // If valid, checks alert byte and instruction type
-        if(!((uint8_t)packet[8] & (uint8_t)dynamixelV2::alertBit) && (int)packet[(uint8_t)dynamixelV2::instructionPos] == (uint8_t)dynamixelV2::statusInstruction)
+        if(!((uint8_t)packet[(uint8_t)dynamixelV2::responseErrorPos] & (uint8_t)dynamixelV2::alertBit) && (int)packet[(uint8_t)dynamixelV2::instructionPos] == (uint8_t)dynamixelV2::statusInstruction)
         {
             return(true);
         }
@@ -127,29 +127,24 @@ bool XL430::decapsulatePacket(const char *packet)
 
 bool XL430::decapsulatePacket(const char *packet, float &value)
 {
-    if(decapsulatePacket(packet))
+    int tmpValue;
+    bool returnValue = decapsulatePacket(packet, tmpValue);
+    if(returnValue)
     {
-        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
-
-        for(int i = 0; i<parameterLength; i++)
-        {
-            value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);
-        }
-
-        return(true);
+        value = tmpValue;
     }
     else
     {
         value = 0;
-        return(false);
     }
+    return(returnValue);
 }
 
 bool XL430::decapsulatePacket(const char *packet, int &value)
 {
     if(decapsulatePacket(packet))
     {
-        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
+        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - (uint8_t)dynamixelV2::nonParameterBytesLength;
 
         for(int i = 0; i<parameterLength; i++)
         {

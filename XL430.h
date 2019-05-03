@@ -14,7 +14,7 @@ enum XL430OperatingModes {
     PWN_CONTROL_MODE = 16,
 };
 
-//! XL430-specific class
+//! XL430 specific class
 /*!
  * \sa XL430 documentation : http://emanual.robotis.com/docs/en/dxl/x/xl430-w250/
  */

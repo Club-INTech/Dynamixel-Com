@@ -9,6 +9,10 @@
 #include "DynamixelUtils.h"
 #include "DynamixelPacketSender.h"
 
+//! AX12 specific class
+/**!
+ * \sa AX12 documentation : http://emanual.robotis.com/docs/en/dxl/ax/ax-12a/
+ */
 class AX12 : public DynamixelMotor
 {
 public:
@@ -17,12 +21,10 @@ public:
 
     DynamixelPacketData* makeWritePacket(DynamixelAccessData, char *) override;
     DynamixelPacketData* makeReadPacket(DynamixelAccessData) override;
-    // TODO Implement
+
     bool decapsulatePacket(const char *) override;
     bool decapsulatePacket(const char *, float &) override;
     bool decapsulatePacket(const char *, int &) override;
-
-
 
     //! The static members are used in order to minimize the memory usage of each individual object.
     static const DynamixelAccessData& goalAngle;
@@ -45,10 +47,11 @@ public:
 private:
 
     static constexpr float torqueConversionFactor = 1/1024.0f;
-    static constexpr float angleConversionFactor = 0.088;
-    static constexpr float velocityConversionFactor = 0.229;
+    static constexpr float angleConversionFactor = 300/1023.0f;
+    static constexpr float velocityConversionFactor = 0.111;
 };
 
 DynamixelMotor* AX12GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender);
+
 
 #endif //XL30_AX12_H

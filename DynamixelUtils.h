@@ -14,7 +14,7 @@
 //!Dynamixel Protocol v1 magic values
 /*!
  * The enum contains useful values of the Dynamixel communication protocol 1.0. For example:
- * \li Minimum lengths of messages
+ * \li Useful lengths
  * \li Instruction values
  * \li Positions of useful data
  */
@@ -23,13 +23,14 @@ enum class dynamixelV1
     broadcastId = 0xFE,
     minPacketLength = 7,             //!< With checksum
     minWriteInstructionLength = 3,   //!< With checksum instruction (1) + address (1) + Checksum (1)
+    readInstructionLength = 4,
     minResponseLength = 5,           //!< Without checksum
     headerLength = 3,                //!< Header+ID+Length-CKSM
     statusResponseLength = 6,
+    nonParameterBytesLength = 4,     //!< Bytes counted in the length which are not parameters
     writeInstruction = 0x03,
     readInstruction = 0x02,
     syncWriteInstruction = 0x83,
-    alertBit = 128,
     idPos = 2,
     lengthPos = 3,
     instructionPos = 4,
@@ -40,7 +41,7 @@ enum class dynamixelV1
 //!Dynamixel Protocol v2 magic values
 /*!
  * The enum contains useful values of the Dynamixel communication protocol 2.0. For example:
- * \li Minimum lengths of messages
+ * \li Useful lengths
  * \li Instruction values
  * \li Positions of useful data
  */
@@ -49,9 +50,11 @@ enum class dynamixelV2
     broadcastId = 0xFE,
     minPacketLength = 12,            //!< With checksum
     minWriteInstructionLength = 5,   //!< With checksum instruction (1) + address (2) + CRC (2)
+    readInstructionLength = 7,
     minResponseLength = 5,           //!< Without checksum
     headerLength = 5,                //!< Header+ID+Length-CRC
     statusResponseLength = 11,
+    nonParameterBytesLength = 4,     //!< Bytes counted in the length which are not parameters
     writeInstruction = 0x03,
     readInstruction = 0x02,
     syncWriteInstruction = 0x83,
@@ -214,7 +217,7 @@ constexpr unsigned short crc_table[256] = {
 
 //! Dynamixel Protocl v1 checksum
 /*!
- * Classic ones complement of the packet sum.
+ * Classic ones complement of the packet sum <b>without headers</b>.
  * @param packet_to_check
  * @param packet_size
  * @return 1 byte checksum
@@ -222,7 +225,7 @@ constexpr unsigned short crc_table[256] = {
 static unsigned char v1Checksum(const char *packet_to_check, unsigned short packet_size)
 {
     int tempSum = 0;
-    for(int i=0;i<packet_size;i++)
+    for(int i=2;i<packet_size;i++)
     {
         tempSum += packet_to_check[i];
     }

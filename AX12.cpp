@@ -65,23 +65,88 @@ DynamixelPacketData* AX12::makeWritePacket(DynamixelAccessData accessData, char*
     return(new DynamixelPacketData(packetSize,(uint8_t)dynamixelV1::statusResponseLength));
 }
 
-// TODO AX12::makeReadPacket
-DynamixelPacketData* AX12::makeReadPacket(DynamixelAccessData)
+DynamixelPacketData* AX12::makeReadPacket(DynamixelAccessData accessData)
 {
-    return nullptr;
+    uint8_t packetSize = (uint8_t)dynamixelV1::minPacketLength+accessData.length;
+    char* packet = manager.txBuffer;
+
+    int position = 0;
+    for(uint8_t i : v1Header)
+    {
+        packet[position] = i;
+        position ++;
+    }
+
+    packet[position] = motorData.motorID;
+    motorData.motorID = motorID;            // This allows to change motor ID and keep communicating
+    position ++;
+    packet[position] = (uint8_t)dynamixelV1::readInstructionLength;
+    position++;
+    packet[position] = (uint8_t)dynamixelV1::readInstruction;
+    position++;
+    packet[position] = accessData.address[0];
+    position++;
+    packet[position] = accessData.length;
+
+    unsigned short chksm = v1Checksum(packet,(uint8_t)dynamixelV1::readInstructionLength+(uint8_t)dynamixelV1::headerLength);
+    packet[position] = chksm & 0xFF;
+
+    return(new DynamixelPacketData(packetSize,(uint8_t)dynamixelV1::statusResponseLength+accessData.length));
 }
 
-// TODO
-bool AX12::decapsulatePacket(const char *) {
-    return false;
-}
-bool AX12::decapsulatePacket(const char *, float &) {
-    return false;
-}
-bool AX12::decapsulatePacket(const char *, int &) {
-    return false;
+bool AX12::decapsulatePacket(const char* packet)
+{
+    unsigned short responseLength = (uint8_t)dynamixelV1::minResponseLength + packet[(uint8_t)dynamixelV1::lengthPos];
+
+    // Checks checksum
+    if(v1Checksum(packet,responseLength) == packet[responseLength])
+    {
+        // If valid, checks error byte
+        if((uint8_t)packet[(uint8_t)dynamixelV1::responseErrorPos] == 0)
+        {
+            return(true);
+        }
+    }
+    return(false);
 }
 
-DynamixelMotor* AX12GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender) {
-    return new AX12(id, *packetSender);
+bool AX12::decapsulatePacket(const char* packet, float& value)
+{
+    int tmpValue;
+    bool returnValue = decapsulatePacket(packet, tmpValue);
+    if(returnValue)
+    {
+        value = tmpValue;
+    }
+    else
+    {
+        value = 0;
+    }
+    return(returnValue);
+}
+
+bool AX12::decapsulatePacket(const char* packet, int& value)
+{
+    if(decapsulatePacket(packet))
+    {
+        int parameterLength = packet[(uint8_t)dynamixelV1::lengthPos] - (uint8_t)dynamixelV1::nonParameterBytesLength;
+
+        for(int i = 0; i<parameterLength; i++)
+        {
+            value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);
+        }
+
+        return(true);
+    }
+    else
+    {
+        value = 0;
+        return(false);
+    }
+}
+
+
+DynamixelMotor* AX12GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender)
+{
+    return new AX12(id,*packetSender);
 }
