@@ -6,27 +6,27 @@
 
 // Definition of previously declared static members to prevent conflicts during linking
 
-const DynamixelAccessData& XL430::xl430ID = DynamixelAccessData(0x07,0x00,1);
-const DynamixelAccessData& XL430::xl430LED = DynamixelAccessData(0x41,0x00,1);
-const DynamixelAccessData& XL430::xl430TorqueEnable = DynamixelAccessData(0x40,0x00,1);
-const DynamixelAccessData& XL430::xl430CurrentTorque = DynamixelAccessData(126,0x00,2);
-const DynamixelAccessData& XL430::xl430GoalAngle = DynamixelAccessData(0x74,0x00,4);
-const DynamixelAccessData& XL430::xl430CurrentAngle = DynamixelAccessData(0x84,0x00,4);
-const DynamixelAccessData& XL430::xl430GoalVelocity = DynamixelAccessData(0x68,0x00,4);
-const DynamixelAccessData& XL430::xl430CurrentVelocity = DynamixelAccessData(0x80,0x00,4);
-const DynamixelAccessData& XL430::xl430OperatingMode = DynamixelAccessData(0x0B,0x00,1);
-const DynamixelAccessData& XL430::xl430VelocityLimit = DynamixelAccessData(112,0x00,4);
-const DynamixelAccessData& XL430::xl430Moving = DynamixelAccessData(122,0x00,1);
-const DynamixelAccessData& XL430::xl430MovingStatus = DynamixelAccessData(123,0x00,1);
-const DynamixelAccessData& XL430::xl430ReturnDelay = DynamixelAccessData(9,0x00,1);
-const DynamixelAccessData& XL430::xl430HardwareError = DynamixelAccessData(70,0x00,1);
-const DynamixelAccessData& XL430::xl430MovingThreshold = DynamixelAccessData(24,0x00,4);
-const DynamixelAccessData& XL430::xl430MovingOffset = DynamixelAccessData(20,0x00,4);
+const DynamixelAccessData& XL430::ID = DynamixelAccessData(0x07,0x00,1);
+const DynamixelAccessData& XL430::LED = DynamixelAccessData(0x41,0x00,1);
+const DynamixelAccessData& XL430::torqueEnable = DynamixelAccessData(0x40,0x00,1);
+const DynamixelAccessData& XL430::currentTorque = DynamixelAccessData(126,0x00,2);
+const DynamixelAccessData& XL430::goalAngle = DynamixelAccessData(0x74,0x00,4);
+const DynamixelAccessData& XL430::currentAngle = DynamixelAccessData(0x84,0x00,4);
+const DynamixelAccessData& XL430::goalVelocity = DynamixelAccessData(0x68,0x00,4);
+const DynamixelAccessData& XL430::currentVelocity = DynamixelAccessData(0x80,0x00,4);
+const DynamixelAccessData& XL430::operatingMode = DynamixelAccessData(0x0B,0x00,1);
+const DynamixelAccessData& XL430::velocityLimit = DynamixelAccessData(112,0x00,4);
+const DynamixelAccessData& XL430::moving = DynamixelAccessData(122,0x00,1);
+const DynamixelAccessData& XL430::movingStatus = DynamixelAccessData(123,0x00,1);
+const DynamixelAccessData& XL430::returnDelay = DynamixelAccessData(9,0x00,1);
+const DynamixelAccessData& XL430::hardwareError = DynamixelAccessData(70,0x00,1);
+const DynamixelAccessData& XL430::movingThreshold = DynamixelAccessData(24,0x00,4);
+const DynamixelAccessData& XL430::movingOffset = DynamixelAccessData(20,0x00,4);
 
-XL430::XL430(uint8_t id, const DynamixelPacketSender& dynamixelManager) : DynamixelMotor(id, DynamixelMotorData(id, xl430ID,
-                                          xl430LED,xl430TorqueEnable,xl430CurrentTorque, xl430GoalAngle, xl430CurrentAngle,
-                                          xl430GoalVelocity,xl430CurrentVelocity,
-                                           xl430OperatingMode,
+XL430::XL430(uint8_t id, const DynamixelPacketSender& dynamixelManager) : DynamixelMotor(id, DynamixelMotorData(id, ID,
+                                          LED,torqueEnable,currentTorque, goalAngle, currentAngle,
+                                          goalVelocity, currentVelocity,
+                                          operatingMode,
                                           torqueConversionFactor,
                                           angleConversionFactor,velocityConversionFactor), dynamixelManager)
 {

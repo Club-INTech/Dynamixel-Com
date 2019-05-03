@@ -30,22 +30,22 @@ public:
     bool decapsulatePacket(const char *, int &) override;
 
     //! The static members are used in order to minimize the memory usage of each individual object.
-    static const DynamixelAccessData& xl430GoalAngle;
-    static const DynamixelAccessData& xl430ID;
-    static const DynamixelAccessData& xl430LED;
-    static const DynamixelAccessData& xl430TorqueEnable;
-    static const DynamixelAccessData& xl430CurrentTorque;
-    static const DynamixelAccessData& xl430CurrentAngle;
-    static const DynamixelAccessData& xl430GoalVelocity;
-    static const DynamixelAccessData& xl430CurrentVelocity;
-    static const DynamixelAccessData& xl430OperatingMode;
-    static const DynamixelAccessData& xl430VelocityLimit;
-    static const DynamixelAccessData& xl430Moving;
-    static const DynamixelAccessData& xl430MovingStatus;
-    static const DynamixelAccessData& xl430ReturnDelay;
-    static const DynamixelAccessData& xl430HardwareError;
-    static const DynamixelAccessData& xl430MovingThreshold;
-    static const DynamixelAccessData& xl430MovingOffset;
+    static const DynamixelAccessData& goalAngle;
+    static const DynamixelAccessData& ID;
+    static const DynamixelAccessData& LED;
+    static const DynamixelAccessData& torqueEnable;
+    static const DynamixelAccessData& currentTorque;
+    static const DynamixelAccessData& currentAngle;
+    static const DynamixelAccessData& goalVelocity;
+    static const DynamixelAccessData& currentVelocity;
+    static const DynamixelAccessData& operatingMode;
+    static const DynamixelAccessData& velocityLimit;
+    static const DynamixelAccessData& moving;
+    static const DynamixelAccessData& movingStatus;
+    static const DynamixelAccessData& returnDelay;
+    static const DynamixelAccessData& hardwareError;
+    static const DynamixelAccessData& movingThreshold;
+    static const DynamixelAccessData& movingOffset;
 
 private:
 
