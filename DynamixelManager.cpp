@@ -5,12 +5,12 @@
 #include "DynamixelManager.h"
 
 // TODO : Try to generalize for different baudrates and serials
-DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, usb_serial_class* debugSerial) : serial(dynamixelSerial), debugSerial(debugSerial)
+DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, usb_serial_class* debugSerial, long baudrate) : serial(dynamixelSerial), debugSerial(debugSerial)
 {
     txBuffer = new char[30];
     rxBuffer = new char[30];
 
-    serial->begin(57600);
+    serial->begin(baudrate);
 }
 
 DynamixelMotor* DynamixelManager::createMotor(uint8_t id, MotorGeneratorFunctionType generator)

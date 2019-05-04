@@ -15,13 +15,13 @@
 class SyncWrite {
 
 public:
-    SyncWrite(const DynamixelManager &, unsigned int, uint16_t, uint16_t);
+    SyncWrite(const DynamixelManager &, unsigned int, uint16_t, uint16_t, uint8_t protocol = 2);
 
     /**
      * Same as {@see SyncWrite(const DynamixelManager &, unsigned int, uint16_t, uint16_t)} but with a DynamixelAccessData reference
      * @param data
      */
-    SyncWrite(const DynamixelManager &, unsigned int, const DynamixelAccessData& data);
+    SyncWrite(const DynamixelManager &, unsigned int, const DynamixelAccessData& data, uint8_t protocol = 2);
 
     /**
      * Sets up the motor IDs in the chain
@@ -68,6 +68,8 @@ private:
      * The data to write to each motor
      */
     char* rawData;
+
+    uint8_t protocol;
 };
 
 
