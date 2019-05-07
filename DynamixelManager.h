@@ -65,6 +65,117 @@ private:
     std::map<uint8_t, DynamixelMotor*> motorMap;
 
     usb_serial_class* debugSerial;
+
+
+    void setHalfDuplex(const Stream & mStream) const
+    {
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.0 3.1 3.2 3.5 3.6
+        if (&mStream == &Serial1)
+        {
+            UART0_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN1_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+        else if (&mStream == &Serial2)
+        {
+            UART1_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN10_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+        else if (&mStream == &Serial3)
+        {
+            UART2_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN8_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+#if defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.5 or 3.6
+        else if (&mStream == &Serial4)
+        {
+            UART3_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN32_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+        else if (&mStream == &Serial5)
+        {
+            UART4_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN33_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+        else if (&mStream == &Serial6)
+        {
+            UART5_C1 |= UART_C1_LOOPS | UART_C1_RSRC; // Connect internally RX and TX for half duplex
+            CORE_PIN48_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
+        }
+#endif
+#else
+#error Dynamixel lib : unsupported hardware
+#endif
+    }
+
+    void setReadMode(const Stream & mStream) const
+    {
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.0 3.1 3.2 3.5 3.6
+        if (&mStream == &Serial1)
+        {
+            UART0_C3 &= ~UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial2)
+        {
+            UART1_C3 &= ~UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial3)
+        {
+            UART2_C3 &= ~UART_C3_TXDIR;
+        }
+#if defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.5 or 3.6
+        else if (&mStream == &Serial4)
+        {
+            UART3_C3 &= ~UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial5)
+        {
+            UART4_C3 &= ~UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial6)
+        {
+            UART5_C3 &= ~UART_C3_TXDIR;
+        }
+#endif
+#else
+#error Dynamixel lib : unsupported hardware
+#endif
+    }
+
+
+    void setWriteMode(const Stream & mStream) const
+    {
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.0 3.1 3.2 3.5 3.6
+        if (&mStream == &Serial1)
+        {
+            UART0_C3 |= UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial2)
+        {
+            UART1_C3 |= UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial3)
+        {
+            UART2_C3 |= UART_C3_TXDIR;
+        }
+#if defined(__MK64FX512__) || defined(__MK66FX1M0__) // Teensy 3.5 ou 3.6
+        else if (&mStream == &Serial4)
+        {
+            UART3_C3 |= UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial5)
+        {
+            UART4_C3 |= UART_C3_TXDIR;
+        }
+        else if (&mStream == &Serial6)
+        {
+            UART5_C3 |= UART_C3_TXDIR;
+        }
+#endif
+#else
+#error Dynamixel lib : unsupported hardware
+#endif
+    }
+
 };
 
 #endif //DYN_MANAGER_H

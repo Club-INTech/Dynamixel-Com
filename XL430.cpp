@@ -127,17 +127,22 @@ bool XL430::decapsulatePacket(const char *packet)
 
 bool XL430::decapsulatePacket(const char *packet, float &value)
 {
-    int tmpValue;
-    bool returnValue = decapsulatePacket(packet, tmpValue);
-    if(returnValue)
+    if(decapsulatePacket(packet))
     {
-        value = tmpValue;
+        int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
+
+        for(int i = 0; i<parameterLength; i++)
+        {
+            value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);
+        }
+
+        return(true);
     }
     else
     {
         value = 0;
+        return(false);
     }
-    return(returnValue);
 }
 
 bool XL430::decapsulatePacket(const char *packet, int &value)
