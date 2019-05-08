@@ -13,6 +13,7 @@ DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, usb_serial_c
     serial->begin(baudrate);
 
     setHalfDuplex(*serial);
+    setWriteMode(*serial);
 }
 
 DynamixelMotor* DynamixelManager::createMotor(uint8_t id, MotorGeneratorFunctionType generator)
@@ -30,7 +31,6 @@ DynamixelMotor* DynamixelManager::getMotor(uint8_t id)
 char* DynamixelManager::readPacket(uint8_t responseSize) const
 {
     memset(rxBuffer, 0, responseSize);
-    this->setReadMode(*serial);
 
     if(responseSize == 0 )
     {
@@ -38,6 +38,7 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
     }
     else
     {
+        this->setReadMode(*serial);
         if(serial->readBytes(rxBuffer,responseSize) == 0) {
             delay(100);
 #ifdef DYN_VERBOSE
@@ -58,6 +59,7 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
         }
 #endif
 
+        this->setWriteMode(*serial);
         return(rxBuffer);
     }
 
@@ -66,7 +68,6 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
 char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
     debugSerial->printf("Available for writing is %i\n", serial->availableForWrite());
-    this->setWriteMode(*serial);
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
 #ifdef DYN_VERBOSE

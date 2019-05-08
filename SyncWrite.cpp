@@ -89,5 +89,5 @@ DynamixelPacketData* SyncWrite::preparePacket() {
 
 bool SyncWrite::send() {
     char* returnPacket = manager.sendPacket(preparePacket());
-    return false;// TODO return decapsulatePacket(returnPacket);
+    return true;// TODO return decapsulatePacket(returnPacket);
 }
