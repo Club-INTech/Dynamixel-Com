@@ -69,7 +69,7 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 {
     // vide le buffer de réception en cas d'erreur de transmission lors de l'échange précédent
     while(serial->available())
-        serial->.read();
+        serial->read();
 
     this->setWriteMode(*serial);
     debugSerial->printf("Available for writing is %i\n", serial->availableForWrite());
