@@ -50,7 +50,7 @@ char* DynamixelManager::readPacket(uint8_t responseSize) const
         }
 #ifdef DYN_VERBOSE
         if(debugSerial) {
-            debugSerial->printf("Received (%i):\n",responseSize);
+            debugSerial->printf("[Dynamixel-Com] Received (%i):\n",responseSize);
             for(unsigned int i = 0; i < responseSize; i++)
             {
                 debugSerial->print((int)rxBuffer[i]);
@@ -72,12 +72,12 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         serial->read();
 
     this->setWriteMode(*serial);
-    debugSerial->printf("Available for writing is %i\n", serial->availableForWrite());
+    debugSerial->printf("[Dynamixel-Com] Available for writing is %i\n", serial->availableForWrite());
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
 #ifdef DYN_VERBOSE
     if(debugSerial) {
-        debugSerial->printf("Sent (%i):\n",packet->dataSize);
+        debugSerial->printf("[Dynamixel-Com] Sent (%i):\n",packet->dataSize);
         for(int i = 0;i<packet->dataSize;i++)
         {
             debugSerial->print((int)(txBuffer[i]));
@@ -90,7 +90,7 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     serial->clear();
 #ifdef DYN_VERBOSE
     if(debugSerial) {
-        debugSerial->printf("Sent (read from Serial) (%i):\n",packet->dataSize);
+        debugSerial->printf("[Dynamixel-Com] Sent (read from Serial) (%i):\n",packet->dataSize);
         for(int i = 0;i<packet->dataSize;i++)
         {
             debugSerial->print((int)(txBuffer[i]));
