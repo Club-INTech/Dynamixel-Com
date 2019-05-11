@@ -29,7 +29,7 @@ public:
     /**
      * Constructs a new DynamixelManager with the serial used for communication with Dynamixel motors and one for debugging that must have begun communication (with begin() ) (can be left to NULL if not needed)
      */
-    explicit DynamixelManager(HardwareSerial*, usb_serial_class*  = nullptr, long baudrate = 57600);
+    explicit DynamixelManager(HardwareSerial*, Stream*  = nullptr, long baudrate = 57600);
 
 
     /*!
@@ -64,7 +64,7 @@ private:
 
     std::map<uint8_t, DynamixelMotor*> motorMap;
 
-    usb_serial_class* debugSerial;
+    Stream* debugSerial;
 
 
     void setHalfDuplex(const Stream & mStream) const

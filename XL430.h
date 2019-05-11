@@ -46,6 +46,7 @@ public:
     static const DynamixelAccessData& hardwareError;
     static const DynamixelAccessData& movingThreshold;
     static const DynamixelAccessData& movingOffset;
+    static const DynamixelAccessData& watchdog;
 
 private:
 

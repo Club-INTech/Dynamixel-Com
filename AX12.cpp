@@ -20,6 +20,7 @@ const DynamixelAccessData& AX12::moving = DynamixelAccessData(46,0x00,2);
 const DynamixelAccessData& AX12::movingStatus = DynamixelAccessData(0xFF,0x00,2);  // FIXME : To change, does not work like that
 const DynamixelAccessData& AX12::hardwareError = DynamixelAccessData(0xFF,0x00,2);  // FIXME : To change, does not work like that
 const DynamixelAccessData& AX12::movingThreshold = DynamixelAccessData(0xFF,0x00,2);  // FIXME : To change, does not work like that
+const DynamixelAccessData& AX12::watchdog = DynamixelAccessData(0xFF,0x00,1);  // FIXME : To change, does not work like that
 
 
 AX12::AX12(uint8_t id, const DynamixelPacketSender& dynamixelManager) : DynamixelMotor(id,DynamixelMotorData(id, ID,
