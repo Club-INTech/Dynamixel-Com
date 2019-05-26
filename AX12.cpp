@@ -146,6 +146,14 @@ bool AX12::decapsulatePacket(const char* packet, int& value)
     }
 }
 
+void AX12::reboot() {
+    // TODO
+}
+
+bool AX12::checkAlert(const char *packet) {
+    return(true); // TODO
+}
+
 
 DynamixelMotor* AX12GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender)
 {

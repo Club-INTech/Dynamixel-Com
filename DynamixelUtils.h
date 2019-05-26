@@ -57,6 +57,7 @@ enum class dynamixelV2
     nonParameterBytesLength = 4,     //!< Bytes counted in the length which are not parameters
     writeInstruction = 0x03,
     readInstruction = 0x02,
+    rebootInstruction = 0x08,
     syncWriteInstruction = 0x83,
     syncReadInstruction = 0x82,
     statusInstruction = 0x55,

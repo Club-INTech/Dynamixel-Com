@@ -47,6 +47,8 @@ public:
     virtual bool getCurrentTorque(int&);
     virtual bool getOperatingMode(uint8_t&);
     virtual bool setOperatingMode(uint8_t);
+    virtual void reboot() = 0;
+    virtual bool checkAlert(const char *packet) = 0;
     //!@}
 
 

@@ -117,11 +117,15 @@ bool XL430::decapsulatePacket(const char *packet)
     // Checks CRC
     if(crc_compute(packet,responseLength) == (packet[responseLength]+(packet[responseLength+1] << 8)))
     {
-        // If valid, checks alert byte and instruction type
-        if(!((uint8_t)packet[(uint8_t)dynamixelV2::responseErrorPos] & (uint8_t)dynamixelV2::alertBit) && (int)packet[(uint8_t)dynamixelV2::instructionPos] == (uint8_t)dynamixelV2::statusInstruction)
-        {
-            return(true);
-        }
+        // If valid, checks instruction type
+        return((int)packet[(uint8_t)dynamixelV2::instructionPos] == (uint8_t)dynamixelV2::statusInstruction);
+    }
+    return(false);
+}
+
+bool XL430::checkAlert(const char *packet) {
+    if(!((uint8_t)packet[(uint8_t)dynamixelV2::responseErrorPos] & (uint8_t)dynamixelV2::alertBit)) {
+        return(true);
     }
     return(false);
 }
@@ -166,6 +170,34 @@ bool XL430::decapsulatePacket(const char *packet, int &value)
     }
 }
 
+void XL430::reboot() {
+    uint8_t packetSize = 10;
+    char* packet = manager.txBuffer;
+    unsigned int position = 0;
+    // HEADER
+    for(unsigned char headerPart : v2Header) {
+        packet[position++] = headerPart;
+    }
+
+    // Packet ID
+    packet[position++] = motorData.motorID;
+    motorID = motorData.motorID;
+
+    // Instruction Length
+    packet[position++] = 0x03;
+    packet[position++] = 0x00;
+
+    // Instruction
+    packet[position++] = (uint8_t)dynamixelV2::rebootInstruction;
+
+    unsigned short crc = crc_compute(packet, packetSize-2);
+    packet[position++] = crc & 0xFF;
+    packet[position++] = (crc >> 8) & 0xFF;
+
+    char* answer = manager.sendPacket(new DynamixelPacketData(packetSize, 11));
+    bool valid = decapsulatePacket(answer);
+
+}
 
 DynamixelMotor* XL430GeneratorFunction(uint8_t id, DynamixelPacketSender* packetSender) {
     return new XL430(id, *packetSender);
