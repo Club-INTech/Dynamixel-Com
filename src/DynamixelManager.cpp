@@ -72,7 +72,9 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         serial->read();
 
     this->setWriteMode(*serial);
+#ifdef DYN_VERBOSE
     debugSerial->printf("[Dynamixel-Com] Available for writing is %i\n", serial->availableForWrite());
+#endif
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
 #ifdef DYN_VERBOSE

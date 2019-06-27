@@ -29,23 +29,23 @@ public:
     bool checkAlert(const char *packet) override;
 
     //! The static members are used in order to minimize the memory usage of each individual object.
-    static const DynamixelAccessData& goalAngle;
-    static const DynamixelAccessData& ID;
-    static const DynamixelAccessData& LED;
-    static const DynamixelAccessData& torqueEnable;
-    static const DynamixelAccessData& currentTorque;
-    static const DynamixelAccessData& currentAngle;
-    static const DynamixelAccessData& goalVelocity;
-    static const DynamixelAccessData& currentVelocity;
-    static const DynamixelAccessData& operatingMode;
+    static const DynamixelAccessData goalAngle;
+    static const DynamixelAccessData ID;
+    static const DynamixelAccessData LED;
+    static const DynamixelAccessData torqueEnable;
+    static const DynamixelAccessData currentTorque;
+    static const DynamixelAccessData currentAngle;
+    static const DynamixelAccessData goalVelocity;
+    static const DynamixelAccessData currentVelocity;
+    static const DynamixelAccessData operatingMode;
 
-    static const DynamixelAccessData& velocityLimit;
-    static const DynamixelAccessData& returnDelay;
-    static const DynamixelAccessData& moving;
-    static const DynamixelAccessData& movingStatus;
-    static const DynamixelAccessData& hardwareError;
-    static const DynamixelAccessData& movingThreshold;
-    static const DynamixelAccessData& watchdog;
+    static const DynamixelAccessData velocityLimit;
+    static const DynamixelAccessData returnDelay;
+    static const DynamixelAccessData moving;
+    static const DynamixelAccessData movingStatus;
+    static const DynamixelAccessData hardwareError;
+    static const DynamixelAccessData movingThreshold;
+    static const DynamixelAccessData watchdog;
 
 private:
 
