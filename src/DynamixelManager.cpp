@@ -1,21 +1,38 @@
 //
-// Created by trotfunky on 07/09/18.
 //
 
 #include "DynamixelManager.h"
 
-// TODO : Try to generalize for different baudrates and serials
-DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, Stream* debugSerial, long baudrate) : serial(dynamixelSerial), debugSerial(debugSerial)
+DynamixelManager::DynamixelManager(Stream* debugSerial) : debugSerial(debugSerial)
 {
     txBuffer = new char[30];
     rxBuffer = new char[30];
+}
 
-    serial->begin(baudrate);
+// TODO : Try to generalize for different baudrates and serials
+DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, Stream* debugSerial, long baudrate) : DynamixelManager(debugSerial)
+{
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__) || defined(__MK64FX512__) || defined(__MK66FX1M0__)
+    serial = dynamixelSerial;
+    ((HardwareSerial*)serial)->begin(baudrate);
 
     setHalfDuplex(*serial);
 
     serial->setTimeout(50);
     setReadMode(*serial);
+#else
+#error "HardwareSerial not supported on this hardware. Supported hardware : Teensy 3.x"
+#endif
+}
+
+DynamixelManager::DynamixelManager(int pin_RX, int pin_TX, Stream* debugSerial, long baudrate) : DynamixelManager(debugSerial)
+{
+    TX = pin_TX;
+    RX = pin_RX;
+
+    serial = new SoftwareSerial(RX, TX);
+    ((SoftwareSerial*)serial)->begin(baudrate);
+    serial->setTimeout(50);
 }
 
 DynamixelMotor* DynamixelManager::createMotor(uint8_t id, MotorGeneratorFunctionType generator)
@@ -89,7 +106,6 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     }
 #endif
     serial->flush();
-    serial->clear();
 #ifdef DYN_VERBOSE
     if(debugSerial) {
         debugSerial->printf("[Dynamixel-Com] Sent (read from Serial) (%i): ",packet->dataSize);

@@ -6,6 +6,7 @@
 #define DYN_MANAGER_H
 
 #include "Arduino.h"
+#include "SoftwareSerial.h"
 #include "DynamixelUtils.h"
 #include "DynamixelPacketSender.h"
 #include "DynamixelMotor.h"
@@ -25,11 +26,22 @@ typedef DynamixelMotor* MotorGeneratorFunctionType(uint8_t, DynamixelPacketSende
 class DynamixelManager: public DynamixelPacketSender {
 
 public:
-
+    /**
+     * Dumb constructor, common to the other ones.
+     * @param debugSerial Serial to output debug messages.
+     */
+    explicit DynamixelManager(Stream* debugSerial);
     /**
      * Constructs a new DynamixelManager with the serial used for communication with Dynamixel motors and one for debugging that must have begun communication (with begin() ) (can be left to NULL if not needed)
      */
     explicit DynamixelManager(HardwareSerial*, Stream*  = nullptr, long baudrate = 57600);
+    /**
+     * Constructs a new DynamixelManager and a new SoftwareSerial on the designated pins.
+     * @param RX Receive pin, board side
+     * @param TX Transmit pin, board side
+     * @param baudrate
+     */
+    DynamixelManager(int RX, int TX, Stream*  = nullptr, long baudrate = 57600);
 
 
     /*!
@@ -59,13 +71,15 @@ public:
      */
      DynamixelMotor* getMotor(uint8_t);
 
-    HardwareSerial* serial;
 private:
+    Stream* serial;
 
     std::map<uint8_t, DynamixelMotor*> motorMap;
 
     Stream* debugSerial;
 
+    int TX;
+    int RX;
 
     void setHalfDuplex(const Stream & mStream) const
     {
@@ -102,8 +116,6 @@ private:
             CORE_PIN48_CONFIG |= PORT_PCR_PE | PORT_PCR_PS; // pullup on output pin
         }
 #endif
-#else
-#error Dynamixel lib : unsupported hardware
 #endif
     }
 
@@ -137,7 +149,7 @@ private:
         }
 #endif
 #else
-#error Dynamixel lib : unsupported hardware
+        pinMode(TX,INPUT);
 #endif
     }
 
@@ -172,7 +184,7 @@ private:
         }
 #endif
 #else
-#error Dynamixel lib : unsupported hardware
+        pinMode(TX,OUTPUT);
 #endif
     }
 
