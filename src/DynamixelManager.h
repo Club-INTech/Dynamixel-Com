@@ -149,7 +149,10 @@ private:
         }
 #endif
 #else
-        pinMode(TX,INPUT);
+        if (TX != RX) // If half-duplex is managed by the SoftwareSerial, don't change the pin state
+        {
+            pinMode(TX, OUTPUT_OPEN_DRAIN);
+        }
 #endif
     }
 
@@ -184,7 +187,10 @@ private:
         }
 #endif
 #else
-        pinMode(TX,OUTPUT);
+        if (TX != RX)
+        {
+            pinMode(TX, OUTPUT);
+        }
 #endif
     }
 

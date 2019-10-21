@@ -21,7 +21,15 @@ DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, Stream* debu
     serial->setTimeout(50);
     setReadMode(*serial);
 #else
-#error "HardwareSerial not supported on this hardware. Supported hardware : Teensy 3.x"
+    pinMode(LED_BUILTIN,OUTPUT);
+    while (true)
+    {
+        digitalWrite(LED_BUILTIN,HIGH);
+        delay(250);
+        digitalWrite(LED_BUILTIN,LOW);
+        delay(250);
+        Serial.println("HardwareSerial not supported on this board. Supported boards:\n - Teensy 3.x");
+    }
 #endif
 }
 
@@ -92,6 +100,7 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
 #ifdef DYN_VERBOSE
     debugSerial->printf("[Dynamixel-Com] Available for writing is %i\n", serial->availableForWrite());
 #endif
+    serial->write((uint8_t)0);  // Garbage byte: SoftwareSerial Half-duplex does not send the first byte.
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
 
 #ifdef DYN_VERBOSE
