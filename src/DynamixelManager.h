@@ -12,6 +12,10 @@
 #include "DynamixelMotor.h"
 #include <map>
 
+#if defined(ESP32) && !defined (LED_BUILTIN) //LED_BUILTIN n'est pas définie sur ESP32
+#define LED_BUILTIN 2
+#endif
+
 // TODO : Rajouter les vraies fonctions de manager
 
 typedef DynamixelMotor* MotorGeneratorFunctionType(uint8_t, DynamixelPacketSender*);
