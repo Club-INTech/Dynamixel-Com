@@ -96,6 +96,14 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     while(serial->available())
         serial->read();
 
+#ifdef ESP32
+    ((SoftwareSerial*)serial)->flush();
+    ((SoftwareSerial*)serial)->enableTx(true);
+    ((SoftwareSerial*)serial)->write(txBuffer, packet->dataSize);
+    ((SoftwareSerial*)serial)->enableTx(false);
+
+#else
+
     this->setWriteMode(*serial);
 #ifdef DYN_VERBOSE
     debugSerial->printf("[Dynamixel-Com] Available for writing is %i\n", serial->availableForWrite());
@@ -133,4 +141,5 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     this->setReadMode(*serial);
 
     return readPacket(responseSize);
+#endif
 }
