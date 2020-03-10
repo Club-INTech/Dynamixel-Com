@@ -37,9 +37,13 @@ DynamixelManager::DynamixelManager(int pin_RX, int pin_TX, Stream* debugSerial, 
 {
     TX = pin_TX;
     RX = pin_RX;
-
+#ifdef ESP32
+    serial = new SoftwareSerial();
+    ((SoftwareSerial*)serial)->begin(baudrate, SWSERIAL_8N1, RX, TX, false, 128);
+#else
     serial = new SoftwareSerial(RX, TX);
     ((SoftwareSerial*)serial)->begin(baudrate);
+#endif
     serial->setTimeout(50);
 }
 
