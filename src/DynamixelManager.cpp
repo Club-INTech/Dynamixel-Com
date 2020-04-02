@@ -29,6 +29,9 @@ DynamixelManager::DynamixelManager(HardwareSerial* dynamixelSerial, Stream* debu
         digitalWrite(LED_BUILTIN,LOW);
         delay(250);
         Serial.println("HardwareSerial not supported on this board. Supported boards:\n - Teensy 3.x");
+#ifdef DYN_VERBOSE
+        debugSerial->println("HardwareSerial not supported on this board. Supported boards:\n - Teensy 3.x");
+#endif
     }
 #endif
 }
@@ -40,6 +43,9 @@ DynamixelManager::DynamixelManager(int pin_RX, int pin_TX, Stream* debugSerial, 
 #ifdef ESP32
     serial = new SoftwareSerial();
     ((SoftwareSerial*)serial)->begin(baudrate, SWSERIAL_8N1, RX, TX, false, 128);
+#elif defined(ARDUINO_ARCH_AVR)
+    serial = new SoftwareSerialWithHalfDuplex(RX, TX);
+    ((SoftwareSerialWithHalfDuplex*)serial)->begin(baudrate);
 #else
     serial = new SoftwareSerial(RX, TX);
     ((SoftwareSerial*)serial)->begin(baudrate);
@@ -62,7 +68,6 @@ DynamixelMotor* DynamixelManager::getMotor(uint8_t id)
 char* DynamixelManager::readPacket(uint8_t responseSize) const
 {
     memset(rxBuffer, 0, responseSize);
-
     if(responseSize == 0 )
     {
         return nullptr;
@@ -100,21 +105,11 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
     while(serial->available())
         serial->read();
 
-#ifdef ESP32
-    ((SoftwareSerial*)serial)->flush();
-    ((SoftwareSerial*)serial)->enableTx(true);
-    ((SoftwareSerial*)serial)->write(txBuffer, packet->dataSize);
-    ((SoftwareSerial*)serial)->enableTx(false);
-
-#else
-
     this->setWriteMode(*serial);
 #ifdef DYN_VERBOSE
     debugSerial->printf("[Dynamixel-Com] Available for writing is %i\n", serial->availableForWrite());
 #endif
-    serial->write((uint8_t)0);  // Garbage byte: SoftwareSerial Half-duplex does not send the first byte.
     serial->write(txBuffer,packet->dataSize);       // Sends buffered packet
-
 #ifdef DYN_VERBOSE
     if(debugSerial) {
         debugSerial->printf("[Dynamixel-Com] Sent (%i): ",packet->dataSize);
@@ -138,12 +133,10 @@ char* DynamixelManager::sendPacket(DynamixelPacketData* packet) const
         debugSerial->println("");
     }
 #endif
-
+    this->setReadMode(*serial);
     memset(txBuffer,0,packet->dataSize);            // Clears transmission buffer
     uint8_t responseSize = packet->responseSize;
     delete packet;
-    this->setReadMode(*serial);
 
     return readPacket(responseSize);
-#endif
 }

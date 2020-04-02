@@ -135,7 +135,6 @@ bool XL430::decapsulatePacket(const char *packet, float &value)
     if(decapsulatePacket(packet))
     {
         int parameterLength = packet[(uint8_t)dynamixelV2::lengthLSBPos] + (packet[(uint8_t)dynamixelV2::lengthMSBPos] << 8) - 4;
-
         for(int i = 0; i<parameterLength; i++)
         {
             value += (int)(packet[(uint8_t)dynamixelV2::responseParameterStart+i] << 8*i);

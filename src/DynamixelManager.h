@@ -6,7 +6,11 @@
 #define DYN_MANAGER_H
 
 #include "Arduino.h"
+#ifndef ARDUINO_ARCH_AVR
 #include "SoftwareSerial.h"
+#else
+#include "SoftwareSerialWithHalfDuplex.h"
+#endif
 #include "DynamixelUtils.h"
 #include "DynamixelPacketSender.h"
 #include "DynamixelMotor.h"
@@ -152,6 +156,10 @@ private:
             UART5_C3 &= ~UART_C3_TXDIR;
         }
 #endif
+#elif defined(ESP32)
+        ((SoftwareSerial*)serial)->enableTx(false);
+#elif defined(ARDUINO_ARCH_AVR)
+        return; //La lib SoftwareSerialWithHalfDuplex gère le changement de mode du pin
 #else
         if (TX != RX) // If half-duplex is managed by the SoftwareSerial, don't change the pin state
         {
@@ -190,6 +198,11 @@ private:
             UART5_C3 |= UART_C3_TXDIR;
         }
 #endif
+#elif defined(ESP32)
+        ((SoftwareSerial*)serial)->flush();
+        ((SoftwareSerial*)serial)->enableTx(true);
+#elif defined(ARDUINO_ARCH_AVR)
+        return; //Le changement est fait par la lib SoftwareSerialWithHalfDuplex dans le write()
 #else
         if (TX != RX)
         {
