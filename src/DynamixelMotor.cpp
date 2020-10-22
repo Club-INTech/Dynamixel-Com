@@ -84,7 +84,7 @@ bool DynamixelMotor::getCurrentAngle(float &angle)
 
 bool DynamixelMotor::setGoalVelocity(float targetVelocity)
 {
-    uint32_t targetVelocityValue = (uint32_t)(targetVelocity/motorData.valueToVelocity);
+    int32_t targetVelocityValue = (int32_t)(targetVelocity/motorData.valueToVelocity);
     char parameter[motorData.goalVelocity.length];
 
     for(int i = 0;i<motorData.goalVelocity.length;i++)
